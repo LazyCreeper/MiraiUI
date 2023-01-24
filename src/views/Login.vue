@@ -89,9 +89,12 @@ export default {
         this.btnLoading = false;
         return;
       }
+      this.$store.commit("addr", this.addr);
       this.$store.commit("sessionKey", verify.session);
+      localStorage.setItem("addr",this.addr)
       localStorage.setItem("sessionKey",verify.session)
       localStorage.setItem("verifyKey",this.password)
+      localStorage.setItem("qq",this.qq)
 
       //   绑定
       const { data: bind } = await axios.post(this.addr + "/bind", {

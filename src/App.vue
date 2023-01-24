@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-system-bar app dark height="30">
+      <span>WebQQ</span>
       <v-spacer></v-spacer>
       <v-icon>mdi-wifi-strength-4</v-icon>
       <v-icon>mdi-signal-cellular-outline</v-icon>
@@ -14,7 +15,9 @@
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" app width="300">
       <v-navigation-drawer v-model="drawer" absolute mini-variant>
-        <v-avatar class="d-block text-center mx-auto mt-4" color="grey darken-1" size="36"></v-avatar>
+        <v-avatar class="d-block text-center mx-auto mt-4" color="grey darken-1" size="36">
+          <v-img :src="'https://q1.qlogo.cn/g?b=qq&nk='+$store.state.sessionInfo.qq.id+'&s=160'" />
+        </v-avatar>
 
         <v-divider class="mx-3 my-5"></v-divider>
 
@@ -28,7 +31,18 @@
       </v-navigation-drawer>
 
       <v-sheet color="grey lighten-5" width="100%">
-        <v-img src="https://cdn.imlazy.ink:233/img/background/104724685_p0.png" />
+        <v-img src="https://api.imlazy.ink/img" max-height="100">
+          <template v-slot:default>
+            <v-row
+              class="fill-height ma-0"
+              align="center"
+              justify="center"
+              style="backdrop-filter: brightness(0.5)"
+            >
+              <p>Hi, {{ $store.state.sessionInfo.qq.nickname }}</p>
+            </v-row>
+          </template>
+        </v-img>
       </v-sheet>
 
       <v-list class="pl-14" shaped>
@@ -40,17 +54,9 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-navigation-drawer
-      app
-      clipped
-      right
-    >
+    <v-navigation-drawer app clipped right>
       <v-list>
-        <v-list-item
-          v-for="n in 5"
-          :key="n"
-          link
-        >
+        <v-list-item v-for="n in 5" :key="n" link>
           <v-list-item-content>
             <v-list-item-title>Item {{ n }}</v-list-item-title>
           </v-list-item-content>
@@ -66,6 +72,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "App",
 
@@ -76,8 +83,9 @@ export default {
 
   created() {
     if (!localStorage.getItem("sessionKey")) {
-      this.$router.push("login")
+      this.$router.push("login");
     }
+    this.getSessionInfo();
   },
 
   mounted() {
@@ -86,6 +94,15 @@ export default {
         .toISOString()
         .substr(11, 8);
     }, 1000);
+  },
+
+  methods: {
+    async getSessionInfo() {
+      const { data: info } = await axios.get(
+        localStorage.addr + "/sessionInfo?sessionKey=" + localStorage.sessionKey
+      );
+      this.$store.commit("sessionInfo", info.data);
+    }
   }
 };
 </script>
