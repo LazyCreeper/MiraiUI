@@ -74,6 +74,12 @@ export default {
     drawer: null
   }),
 
+  created() {
+    if (!localStorage.getItem("sessionKey")) {
+      this.$router.push("login")
+    }
+  },
+
   mounted() {
     setInterval(() => {
       this.time = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)

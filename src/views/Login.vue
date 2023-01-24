@@ -62,7 +62,11 @@ export default {
     btnLoading: false
   }),
 
-  created() {},
+  created() {
+    if (localStorage.getItem("sessionKey")) {
+      window.location.href = "/"
+    }
+  },
 
   methods: {
     async validate() {
@@ -86,6 +90,8 @@ export default {
         return;
       }
       this.$store.commit("sessionKey", verify.session);
+      localStorage.setItem("sessionKey",verify.session)
+      localStorage.setItem("verifyKey",this.password)
 
       //   绑定
       const { data: bind } = await axios.post(this.addr + "/bind", {
@@ -99,8 +105,9 @@ export default {
         this.btnLoading = false;
         return;
       }
-
       this.btnLoading = false;
+
+      this.$router.push("home")
     },
     reset() {
       this.$refs.form.reset();
