@@ -10,16 +10,16 @@ export default new Vuex.Store({
     sessionKey: null,
     sessionInfo: {
       qq: {
-        id: null,
-        nickname: null,
-        remark: null,
+        id: 2211717435,
+        nickname: 'Lazy',
+        remark: '',
       }
     },
     friendList: [
       {
-        id: "",
-        nickname: "",
-        remark: "",
+        id: 1,
+        nickname: "Lazy",
+        remark: "Master",
       }
     ]
   },
@@ -36,6 +36,9 @@ export default new Vuex.Store({
     },
     sessionInfo(state, data) {
       state.sessionInfo = data
+    },
+    friendList(state, data) {
+      state.friendList = data
     }
   },
   actions: {},

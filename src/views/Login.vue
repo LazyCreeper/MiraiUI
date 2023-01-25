@@ -110,7 +110,12 @@ export default {
       }
       this.btnLoading = false;
 
-      this.$router.push("home")
+      const { data: info } = await axios.get(
+        localStorage.addr + "/sessionInfo?sessionKey=" + localStorage.sessionKey
+      );
+      this.$store.commit("sessionInfo", info.data);
+
+      this.$router.push("/")
     },
     reset() {
       this.$refs.form.reset();
