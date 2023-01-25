@@ -14,7 +14,7 @@
       <v-spacer></v-spacer>
     </v-app-bar>
 
-    <Drawer />
+    <Drawer v-if="isLogin"/>
     
     <v-main>
       <v-container>
@@ -27,6 +27,7 @@
 <script>
 // import axios from "axios";
 import Drawer from "@/components/Drawer"
+import { getSessionInfo } from "@/service/tools";
 export default {
   name: "App",
   components: {
@@ -35,13 +36,16 @@ export default {
 
   data: () => ({
     time: null,
+    isLogin: false
   }),
 
   created() {
-    // if (!localStorage.getItem("sessionKey")) {
-    //   this.$router.push("login");
-    //   return;
-    // }
+    if (!localStorage.getItem("sessionKey")) {
+      this.$router.push("login");
+      return;
+    }
+    this.isLogin = true
+    getSessionInfo()
     // this.getSessionInfo();
     // this.getFriendList();
   },

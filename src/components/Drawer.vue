@@ -106,6 +106,7 @@
 </template>
 
 <script>
+import axios from "axios"
 export default {
   name: "Drawer",
   data: () => ({
@@ -125,17 +126,18 @@ export default {
 
   mounted() {
     // console.log(this.$router.history)
+    this.getFriendList()
   },
 
   methods: {
     async getFriendList() {
-      // const { data: fList } = await axios.get(
-      //   localStorage.addr + "/friendList?sessionKey=" + localStorage.sessionKey
-      // );
-      // console.log(fList);
-      // this.friendList = fList.data;
-      // this.$store.commit("friendList", fList.data);
-      // console.log("done");
+      const { data: fList } = await axios.get(
+        localStorage.addr + "/friendList?sessionKey=" + localStorage.sessionKey
+      );
+      console.log(fList);
+      this.friendList = fList.data;
+      this.$store.commit("friendList", fList.data);
+      console.log("done");
     }
   }
 };
