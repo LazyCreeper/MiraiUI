@@ -64,7 +64,7 @@ export default {
 
   created() {
     if (localStorage.getItem("sessionKey")) {
-      window.location.href = "/"
+      window.location.href = "/main"
     }
   },
 
@@ -89,8 +89,8 @@ export default {
         this.btnLoading = false;
         return;
       }
-      this.$store.commit("addr", this.addr);
-      this.$store.commit("sessionKey", verify.session);
+
+      // 即使有Vuex但我还是要把重要信息丢你浏览器
       localStorage.setItem("addr",this.addr)
       localStorage.setItem("sessionKey",verify.session)
       localStorage.setItem("verifyKey",this.password)
@@ -110,12 +110,13 @@ export default {
       }
       this.btnLoading = false;
 
+      // 绑定成功，获取会话信息
       const { data: info } = await axios.get(
         localStorage.addr + "/sessionInfo?sessionKey=" + localStorage.sessionKey
       );
       this.$store.commit("sessionInfo", info.data);
 
-      this.$router.push("/")
+      this.$router.push("/main")
     },
     reset() {
       this.$refs.form.reset();

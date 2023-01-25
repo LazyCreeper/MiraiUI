@@ -1,13 +1,19 @@
 <template>
-  <div class="about">
-    <h1>联系人</h1>
+  <div>
+    联系人
   </div>
 </template>
 
 <script>
 export default {
-  created() {
-    console.log(this.$router)
+  name: "Contacts",
+
+  data: () => ({
+
+  }),
+
+  mounted() {
+    this.$store.commit("router", "contacts");
   }
-}
+};
 </script>
