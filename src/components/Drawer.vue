@@ -68,39 +68,44 @@
       </v-list>
 
       <!-- 联系人 -->
+      
+
       <v-list class="pl-14" shaped v-if="this.$store.state.router === 'contacts'">
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-subtitle>好友 ({{ friendList.length }})</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item-group>
-          <v-list-item v-for="(fList, i) in friendList" :key="i" link>
-            <v-list-item-avatar>
-              <v-img :src="'https://q1.qlogo.cn/g?b=qq&nk='+fList.id+'&s=160'" />
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>{{ fList.nickname }} ({{ fList.remark }})</v-list-item-title>
-              <v-list-item-subtitle>{{ fList.id }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-subtitle>群聊 ({{ groupList.length }})</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item-group>
-          <v-list-item v-for="(gList, i) in groupList" :key="i" link>
-            <v-list-item-avatar>
-              <v-img :src="'https://p.qlogo.cn/gh/'+gList.id+'/'+gList.id+'/100'" />
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>{{ gList.name }}</v-list-item-title>
-              <v-list-item-subtitle>{{ (gList.permission === "MEMBER") ? "🤴" : "" }} {{ gList.id }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
+        <v-list-group prepend-icon="mdi-account-circle">
+          <template v-slot:activator>
+            <v-list-item-title>好友 ({{ friendList.length }})</v-list-item-title>
+          </template>
+          <v-list-item-group>
+            <v-list-item v-for="(fList, i) in friendList" :key="i" link>
+              <v-list-item-avatar>
+                <v-img :src="'https://q1.qlogo.cn/g?b=qq&nk='+fList.id+'&s=160'" />
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>{{ fList.nickname }} ({{ fList.remark }})</v-list-item-title>
+                <v-list-item-subtitle>{{ fList.id }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list-group>
+
+        <v-list-group prepend-icon="mdi-account-group-outline">
+          <template v-slot:activator>
+            <v-list-item-title>群聊 ({{ groupList.length }})</v-list-item-title>
+          </template>
+          <v-list-item-group>
+            <v-list-item v-for="(gList, i) in groupList" :key="i" link>
+              <v-list-item-avatar>
+                <v-img :src="'https://p.qlogo.cn/gh/'+gList.id+'/'+gList.id+'/100'" />
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>{{ gList.name }}</v-list-item-title>
+                <v-list-item-subtitle>{{ (gList.permission === "MEMBER") ? "🤴" : "" }} {{ gList.id }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list-group>
+        
+        
       </v-list>
     </v-navigation-drawer>
 
