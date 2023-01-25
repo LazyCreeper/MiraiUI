@@ -11,7 +11,7 @@
 
         <v-btn
           class="d-flex text-center mx-auto mb-5"
-          color=""
+          color
           active-class="blue--text"
           to="/main"
           text
@@ -22,7 +22,7 @@
         </v-btn>
         <v-btn
           class="d-flex text-center mx-auto mb-5"
-          color=""
+          color
           active-class="pink--text"
           to="/contacts"
           text
@@ -71,7 +71,7 @@
       <v-list class="pl-14" shaped v-if="this.$store.state.router === 'contacts'">
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-subtitle>好友</v-list-item-subtitle>
+            <v-list-item-subtitle>好友 ({{ friendList.length }})</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item-group>
@@ -87,9 +87,20 @@
         </v-list-item-group>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-subtitle>群聊</v-list-item-subtitle>
+            <v-list-item-subtitle>群聊 ({{ groupList.length }})</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item-group>
+          <v-list-item v-for="(gList, i) in groupList" :key="i" link>
+            <v-list-item-avatar>
+              <v-img :src="'https://p.qlogo.cn/gh/'+gList.id+'/'+gList.id+'/100'" />
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>{{ gList.name }}</v-list-item-title>
+              <v-list-item-subtitle>{{ (gList.permission === "MEMBER") ? "🤴" : "" }} {{ gList.id }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
 
@@ -106,7 +117,7 @@
 </template>
 
 <script>
-import axios from "axios"
+import axios from "axios";
 export default {
   name: "Drawer",
   data: () => ({
@@ -115,29 +126,40 @@ export default {
       {
         id: 1,
         nickname: "Lazy",
-        remark: "Master",
+        remark: "Master"
+      }
+    ],
+    groupList: [
+      {
+        id: 123456789,
+        name: "群名1",
+        permission: "MEMBER"
       }
     ]
   }),
 
-  watch: {
-    
-  },
+  watch: {},
 
   mounted() {
-    // console.log(this.$router.history)
-    this.getFriendList()
+    this.getFriendList();
+    this.getGroupList();
   },
 
   methods: {
+    // 获取好友列表
     async getFriendList() {
       const { data: fList } = await axios.get(
         localStorage.addr + "/friendList?sessionKey=" + localStorage.sessionKey
       );
-      console.log(fList);
       this.friendList = fList.data;
-      this.$store.commit("friendList", fList.data);
-      console.log("done");
+      // this.$store.commit("friendList", fList.data);
+    },
+    // 获取群列表
+    async getGroupList() {
+      const { data: gList } = await axios.get(
+        localStorage.addr + "/groupList?sessionKey=" + localStorage.sessionKey
+      );
+      this.groupList = gList.data;
     }
   }
 };
