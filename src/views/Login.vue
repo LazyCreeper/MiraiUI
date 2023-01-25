@@ -44,6 +44,8 @@
 
 <script>
 import axios from "axios";
+import { getSessionInfo } from "@/service/tools";
+
 export default {
   data: () => ({
     valid: null,
@@ -111,10 +113,11 @@ export default {
       this.btnLoading = false;
 
       // 绑定成功，获取会话信息
-      const { data: info } = await axios.get(
-        localStorage.addr + "/sessionInfo?sessionKey=" + localStorage.sessionKey
-      );
-      this.$store.commit("sessionInfo", info.data);
+      // const { data: info } = await axios.get(
+      //   localStorage.addr + "/sessionInfo?sessionKey=" + localStorage.sessionKey
+      // );
+      // this.$store.commit("sessionInfo", info.data);
+      await getSessionInfo()
 
       this.$router.push("/main")
     },
