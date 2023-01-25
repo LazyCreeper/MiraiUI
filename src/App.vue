@@ -10,12 +10,12 @@
     </v-system-bar>
     <v-app-bar app dark clipped-right flat height="60">
       <v-app-bar-nav-icon @click="drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>WebQQ</v-toolbar-title>
+      <v-toolbar-title>{{ ($store.state.chat.name) ? $store.state.chat.name : "WebQQ" }}</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-app-bar>
 
-    <Drawer v-if="isLogin"/>
-    
+    <Drawer v-if="isLogin" />
+
     <v-main>
       <v-container>
         <router-view />
@@ -26,7 +26,7 @@
 
 <script>
 // import axios from "axios";
-import Drawer from "@/components/Drawer"
+import Drawer from "@/components/Drawer";
 import { getSessionInfo } from "@/service/tools";
 export default {
   name: "App",
@@ -44,10 +44,11 @@ export default {
       this.$router.push("login");
       return;
     }
-    this.isLogin = true
-    getSessionInfo()
+    this.isLogin = true;
+    getSessionInfo();
     // this.getSessionInfo();
     // this.getFriendList();
+    // this.launchWs();
   },
 
   mounted() {
@@ -60,8 +61,25 @@ export default {
 
   methods: {
     drawer() {
-      this.$store.commit('drawer',!this.$store.state.drawer)
+      this.$store.commit("drawer", !this.$store.state.drawer);
     },
+    launchWs() {
+      var ws = new WebSocket(
+        "ws://" +
+          localStorage.addr.split('//')[1] +
+          "/all?verifyKey=" +
+          localStorage.verifyKey +
+          "&qq=" +
+          localStorage.qq +
+          "&sessionKey=" +
+          localStorage.sessionKey
+      );
+      ws.onmessage = function() {
+        // var received_msg = evt.data;
+        // var msg = JSON.parse(received_msg);
+        // console.log(msg)
+      };
+    }
   }
 };
 </script>

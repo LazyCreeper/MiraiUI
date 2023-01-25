@@ -24,6 +24,10 @@ export default new Vuex.Store({
     ],
     drawer: null,
     router: null,
+    chat: {
+      id: null,
+      name: null,
+    }
   },
   getters: {},
   mutations: {
@@ -47,6 +51,9 @@ export default new Vuex.Store({
     },
     drawer(state, data) {
       state.drawer = data
+    },
+    chat(state, data) {
+      state.chat = data
     },
   },
   actions: {},
