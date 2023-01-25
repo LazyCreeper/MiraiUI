@@ -21,7 +21,9 @@ export default new Vuex.Store({
         nickname: "Lazy",
         remark: "Master",
       }
-    ]
+    ],
+    drawer: null,
+    router: null,
   },
   getters: {},
   mutations: {
@@ -39,7 +41,13 @@ export default new Vuex.Store({
     },
     friendList(state, data) {
       state.friendList = data
-    }
+    },
+    router(state, data) {
+      state.router = data
+    },
+    drawer(state, data) {
+      state.drawer = data
+    },
   },
   actions: {},
   modules: {},
