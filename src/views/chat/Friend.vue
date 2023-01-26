@@ -1,14 +1,21 @@
 <template>
-  <div >
+  <div>
     <!-- 与 {{ $route.params.id }} {{ $route.params.name }} 聊天 -->
-    <v-list-item :class="($route.params.id) ? 'float-left': ''" v-for="(mList, i) in msgList"
-    :key="i" style="width: 100%">
-     <v-list-item-avatar>
-        <v-img :src="($route.params.id) ? 'https://q1.qlogo.cn/g?b=qq&nk='+$route.params.id+'&s=160' : 'https://q1.qlogo.cn/g?b=qq&nk='+localStorage.qq+'&s=160' " />
+    <v-list-item
+      three-line
+      :class="($route.params.id) ? 'float-left': ''"
+      v-for="(mList, i) in msgList"
+      :key="i"
+      style="width: 100%"
+    >
+      <v-list-item-avatar>
+        <v-img
+          :src="($route.params.id) ? 'https://q1.qlogo.cn/g?b=qq&nk='+$route.params.id+'&s=160' : 'https://q1.qlogo.cn/g?b=qq&nk='+localStorage.qq+'&s=160' "
+        />
       </v-list-item-avatar>
       <v-list-item-content>
-        <v-list-item-title>{{ mList.sender.remark }}</v-list-item-title>
-        <v-list-item-subtitle>{{ mList.messageChain }}</v-list-item-subtitle>
+        <v-list-item-title v-html="processMsg(mList.messageChain)"></v-list-item-title>
+        <v-list-item-subtitle>{{ new Date(Number(mList.messageChain[0].time+"000")).toLocaleString() }}</v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
   </div>
@@ -19,17 +26,7 @@ export default {
   name: "ChatWithFriend",
   data: () => ({
     socket: null,
-    msgList: [
-    //   {
-    //     type: "FriendMessage",
-    //     sender: {
-    //       id: 123,
-    //       nickname: "123",
-    //       remark: "321"
-    //     },
-    //     messageChain: []
-    //   }
-    ]
+    msgList: []
   }),
 
   created() {
@@ -104,6 +101,28 @@ export default {
       if (msg.data.sender.id != this.$route.params.id) return;
       this.msgList.push(msg.data);
       console.log(msg);
+    },
+
+    // 处理收到的消息
+    /** 此处有Bug
+     * 对方发送多行消息时，只能处理第一行
+     **/
+    processMsg(msg) {
+      var 合并の = [];
+      for (var i = 1; i < msg.length; i++) {
+        switch (msg[i].type) {
+          case "Plain":
+            合并の.push(msg[i].text.replace("\n","<br>"));
+            break;
+          case "Image":
+            合并の.push("<a target='_blank' href=" + msg[i].url + ">[ 图片 ]</a>");
+            break;
+          case "Face":
+            合并の.push("[" + msg[i].name + "]");
+            break;
+        }
+      }
+      return 合并の.join();
     }
   }
 };
