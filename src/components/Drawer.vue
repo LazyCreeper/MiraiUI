@@ -122,11 +122,53 @@
       </v-list>
     </v-navigation-drawer>
 
+    <!-- 群成员列表 -->
     <v-navigation-drawer app clipped right v-if="$route.path.split('/')[2] === 'group'">
       <v-list>
         <v-list-item v-for="n in 5" :key="n" link>
           <v-list-item-content>
             <v-list-item-title>TODO: 群成员 {{ n }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <!-- 好友信息 -->
+    <v-navigation-drawer app clipped right v-if="$route.path.split('/')[2] === 'friend'">
+      <v-list>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-subtitle>好友信息</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-if="friendProfile.sign">
+          <v-list-item-content>
+            <v-list-item-title>个性签名</v-list-item-title>
+            <v-list-item-subtitle>{{ friendProfile.sign }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-if="friendProfile.email">
+          <v-list-item-content>
+            <v-list-item-title>邮箱</v-list-item-title>
+            <v-list-item-subtitle>{{ friendProfile.email }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-if="friendProfile.sex">
+          <v-list-item-content>
+            <v-list-item-title>性别</v-list-item-title>
+            <v-list-item-subtitle>{{ (friendProfile.sex === "MALE") ? "男♂" : (friendProfile.sex === "FEMALE") ? "女♀" : "未知"}}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-if="friendProfile.age">
+          <v-list-item-content>
+            <v-list-item-title>年龄</v-list-item-title>
+            <v-list-item-subtitle>{{ friendProfile.age }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-if="friendProfile.level">
+          <v-list-item-content>
+            <v-list-item-title>等级</v-list-item-title>
+            <v-list-item-subtitle>{{ friendProfile.level }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -153,7 +195,14 @@ export default {
         name: "群名1",
         permission: "MEMBER"
       }
-    ]
+    ],
+    friendProfile: {
+      email: "email",
+      age: 18,
+      level: 1,
+      sign: "mirai",
+      sex: "UNKNOWN" // UNKNOWN, MALE, FEMALE
+    }
   }),
 
   watch: {},
@@ -176,6 +225,7 @@ export default {
       this.friendList = fList.data;
       // this.$store.commit("friendList", fList.data);
     },
+
     // 获取群列表
     async getGroupList() {
       const { data: gList } = await axios.get(
@@ -192,7 +242,20 @@ export default {
         remark: d.remark
       };
       this.$store.commit("chat", obj);
+      this.getFriendProfile(obj);
     },
+
+    // 获取好友信息
+    async getFriendProfile(o) {
+      const { data: fProfile } = await axios.get(
+        localStorage.addr +
+          "/friendProfile?sessionKey=" +
+          localStorage.sessionKey +
+          "&target=" +
+          o.id
+      );
+      this.friendProfile = fProfile;
+    }
   }
 };
 </script>
