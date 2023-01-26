@@ -91,7 +91,10 @@ export default {
       this.msgList = [];
     },
     "msgList.length": function(val) {
-      // 窗口内有超过一组消息时，清空聊天记录
+      // 有新消息时，自动滚到最底（待优化
+      this.$vuetify.goTo(9999)
+
+      // 窗口内有超过一组消息时，清空聊天记录（待优化
       if (val > 64) this.msgList = [];
     }
   },
