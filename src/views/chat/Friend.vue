@@ -130,7 +130,9 @@ export default {
             break;
           case "Xml": {
             // 我日，第一次见还要花括号的
-            const xJson = JSON.parse(xmlConvert.xml2json(msg[i].xml,{compact: true}))
+            const xJson = JSON.parse(
+              xmlConvert.xml2json(msg[i].xml, { compact: true })
+            );
             let 哎 = `【${xJson.msg.item.title._text}】${xJson.msg.item.summary._text}<br><a href="${xJson.msg.source._attributes.url}" target="_blank">点击跳转</a>`;
             合并の.push(哎);
             break;
@@ -144,11 +146,11 @@ export default {
           case "MarketFace":
             合并の.push("[" + msg[i].name + "]");
             break;
-          case "MusicShare":
-            合并の.push(
-              "标题：" + msg[i].title + "<br>" + "音源：" + msg[i].musicUrl
-            );
+          case "MusicShare": {
+            let 哎 = `<span>【分享】《${msg[i].title}》 · ${msg[i].summary}</span><br><img src="${msg[i].pictureUrl}"><br><a href="${msg[i].jumpUrl}" target="_blank">前往播放页</a>  |  <a href="${msg[i].musicUrl}" target="_blank">点击收听</a>`;
+            合并の.push(哎);
             break;
+          }
         }
       }
       return 合并の.join();
