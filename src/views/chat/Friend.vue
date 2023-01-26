@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import xmlConvert from "xml-js";
 export default {
   name: "ChatWithFriend",
   data: () => ({
@@ -112,17 +113,28 @@ export default {
       for (var i = 1; i < msg.length; i++) {
         switch (msg[i].type) {
           case "Plain":
-            合并の.push(msg[i].text.replace("\n","<br>"));
+            合并の.push(msg[i].text.replace("\n", "<br>"));
             break;
           case "Image":
-            合并の.push("<a target='_blank' href=" + msg[i].url + ">[图片]</a>");
+            合并の.push(
+              "<a target='_blank' href=" + msg[i].url + ">[图片]</a>"
+            );
             break;
           case "Face":
             合并の.push("[" + msg[i].name + "]");
             break;
           case "Voice":
-            合并の.push("<a target='_blank' href=" + msg[i].url + ">[语音]</a>");
+            合并の.push(
+              "<a target='_blank' href=" + msg[i].url + ">[语音]</a>"
+            );
             break;
+          case "Xml": {
+            // 我日，第一次见还要花括号的
+            const xJson = JSON.parse(xmlConvert.xml2json(msg[i].xml,{compact: true}))
+            let 哎 = `【${xJson.msg.item.title._text}】${xJson.msg.item.summary._text}<br><a href="${xJson.msg.source._attributes.url}" target="_blank">点击跳转</a>`;
+            合并の.push(哎);
+            break;
+          }
           case "App":
             合并の.push(msg[i].content);
             break;
@@ -133,7 +145,9 @@ export default {
             合并の.push("[" + msg[i].name + "]");
             break;
           case "MusicShare":
-            合并の.push("标题：" + msg[i].title + "<br>"+"音源："+msg[i].musicUrl);
+            合并の.push(
+              "标题：" + msg[i].title + "<br>" + "音源：" + msg[i].musicUrl
+            );
             break;
         }
       }
