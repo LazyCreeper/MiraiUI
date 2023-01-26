@@ -146,7 +146,6 @@ export default {
       if (msg.data.type != "FriendMessage") return;
       if (msg.data.sender.id != this.$route.params.id) return;
       this.msgList.push(msg.data);
-      console.log(msg);
     },
 
     // 处理收到的消息
@@ -158,7 +157,7 @@ export default {
       for (var i = 1; i < msg.length; i++) {
         switch (msg[i].type) {
           case "Plain":
-            合并の.push(msg[i].text.replace("\n", "<br>"));
+            合并の.push(msg[i].text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace("\n", "<br>"));
             break;
           case "Image":
             合并の.push(
