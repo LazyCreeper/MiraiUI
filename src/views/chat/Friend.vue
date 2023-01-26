@@ -115,10 +115,25 @@ export default {
             合并の.push(msg[i].text.replace("\n","<br>"));
             break;
           case "Image":
-            合并の.push("<a target='_blank' href=" + msg[i].url + ">[ 图片 ]</a>");
+            合并の.push("<a target='_blank' href=" + msg[i].url + ">[图片]</a>");
             break;
           case "Face":
             合并の.push("[" + msg[i].name + "]");
+            break;
+          case "Voice":
+            合并の.push("<a target='_blank' href=" + msg[i].url + ">[语音]</a>");
+            break;
+          case "App":
+            合并の.push(msg[i].content);
+            break;
+          case "Poke":
+            合并の.push("[" + msg[i].name + "]");
+            break;
+          case "MarketFace":
+            合并の.push("[" + msg[i].name + "]");
+            break;
+          case "MusicShare":
+            合并の.push("标题：" + msg[i].title + "<br>"+"音源："+msg[i].musicUrl);
             break;
         }
       }
