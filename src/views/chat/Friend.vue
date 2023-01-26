@@ -3,13 +3,13 @@
     <v-list-item
       three-line
       v-for="(mList, i) in msgList"
-      :class="($route.params.id === mList.sender.id) ? 'LLLLLL': 'dir-rtl'"
+      :class="(Number($route.params.id) === mList.sender.id) ? 'wtf': 'dir-rtl'"
       :key="i"
       style="width: 100%"
     >
       <v-list-item-avatar>
         <v-img
-          :src="($route.params.id === mList.sender.id) ? 'https://q1.qlogo.cn/g?b=qq&nk='+$route.params.id+'&s=160' : 'https://q1.qlogo.cn/g?b=qq&nk='+mList.sender.id+'&s=160' "
+          :src="(Number($route.params.id) === mList.sender.id) ? 'https://q1.qlogo.cn/g?b=qq&nk='+$route.params.id+'&s=160' : 'https://q1.qlogo.cn/g?b=qq&nk='+mList.sender.id+'&s=160' "
         />
       </v-list-item-avatar>
       <v-list-item-content>
