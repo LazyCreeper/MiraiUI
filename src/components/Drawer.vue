@@ -44,7 +44,7 @@
       </v-navigation-drawer>
 
       <v-sheet color="grey lighten-5" width="100%">
-        <v-img src="https://api.imlazy.ink/img" max-height="100">
+        <v-img src="https://cdn.imlazy.ink:233/img/background/72731287_p0.png" max-height="100">
           <template v-slot:default>
             <v-row
               class="fill-height ma-0"
