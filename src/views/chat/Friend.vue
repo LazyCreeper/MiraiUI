@@ -49,9 +49,18 @@ export default {
       name: null
     };
     this.$store.commit("chat", obj);
+    this.msgList = []
+  },
 
-    // 关闭ws连接
-    // this.socket.onclose;
+  watch: {
+    "$route.params.id": function() {
+        // 窗口聊天对象改变时，清空聊天记录
+        this.msgList = []
+    },
+    "msgList.length": function(val) {
+        // 窗口内有超过一组消息时，清空聊天记录
+        if(val>64) this.msgList = []
+    }
   },
 
   methods: {
