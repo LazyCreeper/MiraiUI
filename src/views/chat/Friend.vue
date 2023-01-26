@@ -1,16 +1,15 @@
 <template>
   <div>
-    <!-- 与 {{ $route.params.id }} {{ $route.params.name }} 聊天 -->
     <v-list-item
       three-line
-      :class="($route.params.id) ? 'float-left': ''"
       v-for="(mList, i) in msgList"
+      :class="($route.params.id === mList.sender.id) ? 'LLLLLL': 'dir-rtl'"
       :key="i"
       style="width: 100%"
     >
       <v-list-item-avatar>
         <v-img
-          :src="($route.params.id) ? 'https://q1.qlogo.cn/g?b=qq&nk='+$route.params.id+'&s=160' : 'https://q1.qlogo.cn/g?b=qq&nk='+localStorage.qq+'&s=160' "
+          :src="($route.params.id === mList.sender.id) ? 'https://q1.qlogo.cn/g?b=qq&nk='+$route.params.id+'&s=160' : 'https://q1.qlogo.cn/g?b=qq&nk='+mList.sender.id+'&s=160' "
         />
       </v-list-item-avatar>
       <v-list-item-content>
@@ -18,16 +17,54 @@
         <v-list-item-subtitle>{{ new Date(Number(mList.messageChain[0].time+"000")).toLocaleString() }}</v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
+
+    <!-- 先丢在这能用先，再美化 -->
+    <div inputArea>
+      <v-row>
+        <v-col sm="9">
+          <v-textarea
+            label="说点什么吧"
+            v-model="sMsg"
+            outlined
+            clearable
+            auto-grow
+            counter
+            width="100"
+            rows="3"
+          ></v-textarea>
+        </v-col>
+        <v-col sm="3">
+          <v-btn elevation="2" x-large @click="sendMsg">发送</v-btn>
+        </v-col>
+      </v-row>
+    </div>
   </div>
 </template>
 
+<style scoped>
+[inputArea] {
+  position: fixed;
+  bottom: 0;
+  width: 60%;
+}
+
+.dir-rtl {
+  direction: rtl;
+}
+.dir-rtl > .v-list-item__avatar {
+  margin-left: 15px;
+}
+</style>
+
 <script>
+import axios from "axios";
 import xmlConvert from "xml-js";
 export default {
   name: "ChatWithFriend",
   data: () => ({
     socket: null,
-    msgList: []
+    msgList: [],
+    sMsg: null
   }),
 
   created() {
@@ -36,10 +73,6 @@ export default {
 
   updated() {
     this.updateWindow();
-    // 关闭原有的ws连接
-    // if (this.socket) return this.socket.onclose;
-    // 启动新的
-    // this.launchWs();
   },
 
   destroyed() {
@@ -49,17 +82,17 @@ export default {
       name: null
     };
     this.$store.commit("chat", obj);
-    this.msgList = []
+    this.msgList = [];
   },
 
   watch: {
     "$route.params.id": function() {
-        // 窗口聊天对象改变时，清空聊天记录
-        this.msgList = []
+      // 窗口聊天对象改变时，清空聊天记录
+      this.msgList = [];
     },
     "msgList.length": function(val) {
-        // 窗口内有超过一组消息时，清空聊天记录
-        if(val>64) this.msgList = []
+      // 窗口内有超过一组消息时，清空聊天记录
+      if (val > 64) this.msgList = [];
     }
   },
 
@@ -163,6 +196,42 @@ export default {
         }
       }
       return 合并の.join();
+    },
+
+    // 发送消息
+    async sendMsg() {
+      const res = await axios.post(localStorage.addr + "/sendFriendMessage", {
+        sessionKey: localStorage.sessionKey,
+        target: this.$route.params.id,
+        messageChain: [
+          {
+            type: "Plain",
+            text: this.sMsg
+          }
+        ]
+      });
+      //   伪造一条假的
+      var obj = {
+        type: "FriendMessage",
+        sender: {
+          id: localStorage.qq
+        },
+        messageChain: [
+          {
+            id: res.messageId,
+            time: Date.now()
+              .toString()
+              .slice(0, 10),
+            type: "Source"
+          },
+          {
+            type: "Plain",
+            text: this.sMsg
+          }
+        ]
+      };
+      this.msgList.push(obj);
+      this.sMsg = "";
     }
   }
 };
