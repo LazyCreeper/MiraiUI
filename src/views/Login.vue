@@ -119,7 +119,7 @@ export default {
       // this.$store.commit("sessionInfo", info.data);
       await getSessionInfo()
 
-      this.$router.push("/main")
+      window.location.href = "/main"
     },
     reset() {
       this.$refs.form.reset();
