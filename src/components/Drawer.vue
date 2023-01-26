@@ -186,10 +186,10 @@ export default {
 
     // 进入聊天窗口
     toChat(d) {
-      console.log(d);
       const obj = {
         id: d.id,
-        name: d.remark || d.name
+        name: d.nickname || d.name,
+        remark: d.remark
       };
       this.$store.commit("chat", obj);
     },
