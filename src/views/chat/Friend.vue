@@ -1,22 +1,24 @@
 <template>
   <div>
-    <v-list-item
-      three-line
-      v-for="(mList, i) in msgList"
-      :class="(Number($route.params.id) === mList.sender.id) ? 'wtf': 'dir-rtl'"
-      :key="i"
-      style="width: 100%"
-    >
-      <v-list-item-avatar>
-        <v-img
-          :src="(Number($route.params.id) === mList.sender.id) ? 'https://q1.qlogo.cn/g?b=qq&nk='+$route.params.id+'&s=160' : 'https://q1.qlogo.cn/g?b=qq&nk='+mList.sender.id+'&s=160' "
-        />
-      </v-list-item-avatar>
-      <v-list-item-content>
-        <v-list-item-title v-html="processMsg(mList.messageChain)"></v-list-item-title>
-        <v-list-item-subtitle>{{ new Date(Number(mList.messageChain[0].time+"000")).toLocaleString() }}</v-list-item-subtitle>
-      </v-list-item-content>
-    </v-list-item>
+    <div id="chatArea">
+      <v-list-item
+        three-line
+        v-for="(mList, i) in msgList"
+        :class="(Number($route.params.id) === mList.sender.id) ? 'wtf': 'dir-rtl'"
+        :key="i"
+        style="width: 100%"
+      >
+        <v-list-item-avatar>
+          <v-img
+            :src="(Number($route.params.id) === mList.sender.id) ? 'https://q1.qlogo.cn/g?b=qq&nk='+$route.params.id+'&s=160' : 'https://q1.qlogo.cn/g?b=qq&nk='+mList.sender.id+'&s=160' "
+          />
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title v-html="processMsg(mList.messageChain)"></v-list-item-title>
+          <v-list-item-subtitle>{{ new Date(Number(mList.messageChain[0].time+"000")).toLocaleString() }}</v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+    </div>
 
     <!-- 先丢在这能用先，再美化 -->
     <div inputArea>
@@ -42,6 +44,11 @@
 </template>
 
 <style scoped>
+#chatArea {
+    height: 70vh;
+    overflow-y: auto;
+}
+
 [inputArea] {
   position: fixed;
   bottom: 0;
@@ -92,7 +99,13 @@ export default {
     },
     "msgList.length": function(val) {
       // 有新消息时，自动滚到最底（待优化
-      this.$vuetify.goTo(9999)
+    //   this.$vuetify.goTo("#chatArea");
+        // this.goToBottom()
+        this.$nextTick(() => {
+        var div = document.getElementById('chatArea');
+        div.scrollTop = div.scrollHeight;
+      })
+
 
       // 窗口内有超过一组消息时，清空聊天记录（待优化
       if (val > 64) this.msgList = [];
@@ -100,6 +113,11 @@ export default {
   },
 
   methods: {
+
+    goToBottom() {
+        var chatArea = document.getElementById('chatArea');
+        chatArea.scrollTop = chatArea.scrollHeight;
+    },
     // 更新窗口信息
     updateWindow() {
       const obj = {
@@ -157,7 +175,12 @@ export default {
       for (var i = 1; i < msg.length; i++) {
         switch (msg[i].type) {
           case "Plain":
-            合并の.push(msg[i].text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace("\n", "<br>"));
+            合并の.push(
+              msg[i].text
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace("\n", "<br>")
+            );
             break;
           case "Image":
             合并の.push(
