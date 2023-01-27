@@ -133,10 +133,6 @@ export default {
     this.launchWs();
   },
 
-  updated() {
-    this.updateWindow();
-  },
-
   destroyed() {
     // 关闭窗口时销毁相关信息
     const obj = {
@@ -165,14 +161,6 @@ export default {
   },
 
   methods: {
-    // 更新窗口信息
-    updateWindow() {
-      const obj = {
-        id: this.$route.params.id,
-        name: this.$route.params.name
-      };
-      this.$store.commit("chat", obj);
-    },
 
     // 启动 WebSocket 连接，用于接收消息
     launchWs() {
