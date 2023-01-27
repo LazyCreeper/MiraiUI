@@ -21,8 +21,33 @@
     </div>
 
     <!-- 先丢在这能用先，再美化 -->
-    <div inputArea>
+    <div>
       <v-row>
+        <v-col cols="12">
+          <v-btn-toggle>
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn>
+                  <v-icon v-bind="attrs" v-on="on">mdi-file-plus-outline</v-icon>
+                </v-btn>
+              </template>
+              <span>发送文件</span>
+            </v-tooltip>
+
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn @click="sImg.dialog = true">
+                  <v-icon v-bind="attrs" v-on="on">mdi-image-plus</v-icon>
+                </v-btn>
+              </template>
+              <span>发送图片</span>
+            </v-tooltip>
+
+            <v-btn>
+              <v-icon>mdi-cog-outline</v-icon>
+            </v-btn>
+          </v-btn-toggle>
+        </v-col>
         <v-col sm="10">
           <v-textarea
             label="说点什么吧"
@@ -35,21 +60,47 @@
             rows="1"
           ></v-textarea>
         </v-col>
-        <v-col sm="1">
-          <v-btn elevation="2" x-large @click="sendMsg">发送</v-btn>
+        <v-col sm="2">
+          <v-btn elevation="2" block x-large @click="sendMsg">发送</v-btn>
         </v-col>
       </v-row>
     </div>
+
+    <!-- 发送图片对话框 -->
+    <v-dialog v-model="sImg.dialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">上传图片</span>
+          <v-spacer></v-spacer>
+          <v-btn icon plain @click="sImg.dialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-tabs fixed-tabs dark v-model="tab">
+            <v-tab disabled>本地上传</v-tab>
+            <v-tab>网络URL</v-tab>
+          </v-tabs>
+          <v-tabs-items v-model="tab" class="pt-5">
+            <v-tab-item disabled>
+              <v-file-input label="选择文件" outlined @change="handleFiles"></v-file-input>
+              <v-btn elevation="2" block x-large>上传并发送</v-btn>
+            </v-tab-item>
+            <v-tab-item>
+              <v-text-field label="图片URL" prepend-icon="mdi-web" outlined v-model="sImg.url"></v-text-field>
+              <v-btn elevation="2" block x-large :loading="sImg.btnLoading" @click="sendImg">发送</v-btn>
+            </v-tab-item>
+          </v-tabs-items>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <style scoped>
 #chatArea {
-  height: 70vh;
+  height: 68vh;
   overflow-y: auto;
-}
-
-[inputArea] {
 }
 
 .dir-rtl {
@@ -66,9 +117,16 @@ import xmlConvert from "xml-js";
 export default {
   name: "ChatWithFriend",
   data: () => ({
+    dialog: null,
+    tab: null,
     socket: null,
     msgList: [],
-    sMsg: null
+    sMsg: null,
+    sImg: {
+        dialog: null,
+        btnLoading: false,
+        url: ""
+    }
   }),
 
   created() {
@@ -243,6 +301,57 @@ export default {
       };
       this.msgList.push(obj);
       this.sMsg = "";
+    },
+
+    // 图片转Base64
+    handleFiles(e) {
+      var reader = new FileReader();
+      reader.readAsDataURL(e);
+      reader.onload = f => {
+        this.sImg = f.target.result;
+      };
+    },
+
+    // 发送图片
+    async sendImg() {
+      if (this.sImg.url === "") return;
+      if (this.sImg.url.split("http")[0] != "") return;
+      console.log(this.sImg.url.split("http")[0])
+      this.sImg.btnLoading = true
+      const res = await axios.post(localStorage.addr + "/sendFriendMessage", {
+        sessionKey: localStorage.sessionKey,
+        target: this.$route.params.id,
+        messageChain: [
+          {
+            type: "Image",
+            url: this.sImg.url
+          }
+        ]
+      });
+      //   伪造一条假的
+      var obj = {
+        type: "FriendMessage",
+        sender: {
+          id: localStorage.qq
+        },
+        messageChain: [
+          {
+            id: res.messageId,
+            time: Date.now()
+              .toString()
+              .slice(0, 10),
+            type: "Source"
+          },
+          {
+            type: "Image",
+            url: this.sImg.url
+          }
+        ]
+      };
+      this.msgList.push(obj);
+      this.sImg.url = "";
+      this.sImg.btnLoading = false
+      this.sImg.dialog = false;
     }
   }
 };
