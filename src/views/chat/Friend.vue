@@ -23,7 +23,7 @@
     <!-- 先丢在这能用先，再美化 -->
     <div inputArea>
       <v-row>
-        <v-col sm="9">
+        <v-col sm="10">
           <v-textarea
             label="说点什么吧"
             v-model="sMsg"
@@ -32,10 +32,10 @@
             auto-grow
             counter
             width="100"
-            rows="3"
+            rows="1"
           ></v-textarea>
         </v-col>
-        <v-col sm="3">
+        <v-col sm="1">
           <v-btn elevation="2" x-large @click="sendMsg">发送</v-btn>
         </v-col>
       </v-row>
@@ -45,14 +45,11 @@
 
 <style scoped>
 #chatArea {
-    height: 70vh;
-    overflow-y: auto;
+  height: 70vh;
+  overflow-y: auto;
 }
 
 [inputArea] {
-  position: fixed;
-  bottom: 0;
-  width: 60%;
 }
 
 .dir-rtl {
@@ -99,13 +96,10 @@ export default {
     },
     "msgList.length": function(val) {
       // 有新消息时，自动滚到最底（待优化
-    //   this.$vuetify.goTo("#chatArea");
-        // this.goToBottom()
-        this.$nextTick(() => {
-        var div = document.getElementById('chatArea');
-        div.scrollTop = div.scrollHeight;
-      })
-
+      this.$nextTick(() => {
+        var chatArea = document.getElementById("chatArea");
+        chatArea.scrollTop = chatArea.scrollHeight;
+      });
 
       // 窗口内有超过一组消息时，清空聊天记录（待优化
       if (val > 64) this.msgList = [];
@@ -113,11 +107,6 @@ export default {
   },
 
   methods: {
-
-    goToBottom() {
-        var chatArea = document.getElementById('chatArea');
-        chatArea.scrollTop = chatArea.scrollHeight;
-    },
     // 更新窗口信息
     updateWindow() {
       const obj = {
@@ -167,9 +156,6 @@ export default {
     },
 
     // 处理收到的消息
-    /** 此处有Bug
-     * 对方发送多行消息时，只能处理第一行
-     **/
     processMsg(msg) {
       var 合并の = [];
       for (var i = 1; i < msg.length; i++) {
@@ -179,7 +165,7 @@ export default {
               msg[i].text
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
-                .replace("\n", "<br>")
+                .replace(/\n/g, "<br>")
             );
             break;
           case "Image":
