@@ -10,7 +10,7 @@
     </v-system-bar>
     <v-app-bar app dark clipped-right flat height="60">
       <v-app-bar-nav-icon @click="drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>{{ ($store.state.chat.name) ? $store.state.chat.name : "WebQQ" }} {{ ($store.state.chat.remark) ? " (" + $store.state.chat.remark + ")" : "" }} {{ ($store.state.chat.id) ? " 『" + $store.state.chat.id + "』" : "" }}</v-toolbar-title>
+      <v-toolbar-title>{{ ($store.state.chat.name) ? $store.state.chat.name : "WebQQ" }} {{ ($store.state.chat.remark) ? " (" + $store.state.chat.remark + ")" : "" }} {{ ($route.params.id) ? " 『" + $route.params.id + "』" : "" }}</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-app-bar>
 
