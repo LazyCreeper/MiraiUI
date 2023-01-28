@@ -27,11 +27,11 @@
           <v-btn-toggle>
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn>
-                  <v-icon v-bind="attrs" v-on="on">mdi-file-plus-outline</v-icon>
+                <v-btn @click="sVoice.dialog = true">
+                  <v-icon v-bind="attrs" v-on="on">mdi-microphone</v-icon>
                 </v-btn>
               </template>
-              <span>发送文件</span>
+              <span>发送音频</span>
             </v-tooltip>
 
             <v-tooltip top>
@@ -94,6 +94,23 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <!-- 发送语音对话框 -->
+    <v-dialog v-model="sVoice.dialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">发送语音</span>
+          <v-spacer></v-spacer>
+          <v-btn icon plain @click="sVoice.dialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-text-field label="音频URL" prepend-icon="mdi-web" outlined v-model="sVoice.url"></v-text-field>
+          <v-btn elevation="2" block x-large :loading="sVoice.btnLoading" @click="sendVoice">发送</v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -123,14 +140,20 @@ export default {
     msgList: [],
     sMsg: null,
     sImg: {
-        dialog: null,
-        btnLoading: false,
-        url: ""
+      dialog: null,
+      btnLoading: false,
+      url: ""
+    },
+    sVoice: {
+      dialog: null,
+      btnLoading: false,
+      file: ""
     }
   }),
 
   created() {
     this.launchWs();
+    console.log(this.$store.state.chat.id);
   },
 
   destroyed() {
@@ -161,7 +184,6 @@ export default {
   },
 
   methods: {
-
     // 启动 WebSocket 连接，用于接收消息
     launchWs() {
       this.socket = true;
@@ -199,6 +221,7 @@ export default {
       if (msg.data.type != "FriendMessage") return;
       if (msg.data.sender.id != this.$route.params.id) return;
       this.msgList.push(msg.data);
+      console.log(msg);
     },
 
     // 处理收到的消息
@@ -300,12 +323,11 @@ export default {
       };
     },
 
-    // 发送图片
+    // 发送图片（目前只弄了发送单张）
     async sendImg() {
       if (this.sImg.url === "") return;
       if (this.sImg.url.split("http")[0] != "") return;
-      console.log(this.sImg.url.split("http")[0])
-      this.sImg.btnLoading = true
+      this.sImg.btnLoading = true;
       const res = await axios.post(localStorage.addr + "/sendFriendMessage", {
         sessionKey: localStorage.sessionKey,
         target: this.$route.params.id,
@@ -338,8 +360,51 @@ export default {
       };
       this.msgList.push(obj);
       this.sImg.url = "";
-      this.sImg.btnLoading = false
+      this.sImg.btnLoading = false;
       this.sImg.dialog = false;
+    },
+
+    // 发送语音
+    async sendVoice() {
+      if (this.sVoice.url === "") return;
+      if (this.sVoice.url.split("http")[0] != "") return;
+      this.sVoice.btnLoading = true;
+      const res = await axios.post(localStorage.addr + "/sendFriendMessage", {
+        sessionKey: localStorage.sessionKey,
+        target: this.$route.params.id,
+        messageChain: [
+          {
+            type: "Voice",
+            url: this.sVoice.url
+          }
+        ]
+      });
+      //   伪造一条假的
+      var obj = {
+        type: "FriendMessage",
+        sender: {
+          id: localStorage.qq
+        },
+        messageChain: [
+          {
+            id: res.messageId,
+            time: Date.now()
+              .toString()
+              .slice(0, 10),
+            type: "Source"
+          },
+          {
+            type: "Voice",
+            url: this.sVoice.url
+          }
+        ]
+      };
+      this.msgList.push(obj);
+      this.sVoice = {
+        dialog: null,
+        btnLoading: false,
+        file: ""
+      };
     }
   }
 };
