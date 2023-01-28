@@ -113,13 +113,11 @@ export default {
       this.btnLoading = false;
 
       // 绑定成功，获取会话信息
-      // const { data: info } = await axios.get(
-      //   localStorage.addr + "/sessionInfo?sessionKey=" + localStorage.sessionKey
-      // );
-      // this.$store.commit("sessionInfo", info.data);
       await getSessionInfo()
 
-      window.location.href = "/main"
+      this.$store.commit("isLogin", true);
+      // window.location.href = "/#/main"
+      this.$router.push('main')
     },
     reset() {
       this.$refs.form.reset();

@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    isLogin: false,
     addr: null,
     verifyKey: null,
     sessionKey: null,
@@ -31,6 +32,9 @@ export default new Vuex.Store({
   },
   getters: {},
   mutations: {
+    isLogin(state, data) {
+      state.isLogin = data
+    },
     addr(state, data) {
       state.addr = data
     },

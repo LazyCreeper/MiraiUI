@@ -14,7 +14,7 @@
       <v-spacer></v-spacer>
     </v-app-bar>
 
-    <Drawer v-if="isLogin" />
+    <Drawer v-if="$store.state.isLogin"/>
 
     <v-main>
       <v-container>
@@ -41,11 +41,14 @@ export default {
 
   created() {
     if (!localStorage.getItem("sessionKey")) {
-      this.$router.push("/login");
+      this.$router.push("login");
       return;
+    } else {
+      console.log("logOK")
+      this.$store.commit("isLogin", true);
+      getSessionInfo();
     }
-    this.isLogin = true;
-    getSessionInfo();
+
     // this.launchWs();
   },
 
@@ -64,7 +67,7 @@ export default {
     launchWs() {
       var ws = new WebSocket(
         "ws://" +
-          localStorage.addr.split('//')[1] +
+          localStorage.addr.split("//")[1] +
           "/all?verifyKey=" +
           localStorage.verifyKey +
           "&qq=" +
