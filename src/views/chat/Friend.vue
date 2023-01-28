@@ -277,16 +277,11 @@ export default {
     },
 
     // 发送消息
-    async sendMsg() {
+    async sendMsgg(chain) {
       const res = await axios.post(localStorage.addr + "/sendFriendMessage", {
         sessionKey: localStorage.sessionKey,
         target: this.$route.params.id,
-        messageChain: [
-          {
-            type: "Plain",
-            text: this.sMsg
-          }
-        ]
+        messageChain: [chain]
       });
       //   伪造一条假的
       var obj = {
@@ -302,13 +297,19 @@ export default {
               .slice(0, 10),
             type: "Source"
           },
-          {
-            type: "Plain",
-            text: this.sMsg
-          }
+          chain
         ]
       };
       this.msgList.push(obj);
+    },
+
+    // 发送文本消息
+    sendMsg() {
+      const chain = {
+        type: "Plain",
+        text: this.sMsg
+      };
+      this.sendMsgg(chain);
       this.sMsg = "";
     },
 
@@ -326,81 +327,28 @@ export default {
       if (this.sImg.url === "") return;
       if (this.sImg.url.split("http")[0] != "") return;
       this.sImg.btnLoading = true;
-
-      const res = await axios.post(localStorage.addr + "/sendFriendMessage", {
-        sessionKey: localStorage.sessionKey,
-        target: this.$route.params.id,
-        messageChain: [
-          {
-            type: "Image",
-            url: this.sImg.url
-          }
-        ]
-      });
-      //   伪造一条假的
-      var obj = {
-        type: "FriendMessage",
-        sender: {
-          id: localStorage.qq
-        },
-        messageChain: [
-          {
-            id: res.messageId,
-            time: Date.now()
-              .toString()
-              .slice(0, 10),
-            type: "Source"
-          },
-          {
-            type: "Image",
-            url: this.sImg.url
-          }
-        ]
+      const chain = {
+        type: "Image",
+        url: this.sImg.url
       };
-      this.msgList.push(obj);
-      this.sImg.url = {
+      this.sendMsgg(chain);
+      this.sImg = {
         dialog: null,
         btnLoading: false,
         file: ""
       };
     },
 
-    // 发送语音
+    // 发送烂掉的语音
     async sendVoice() {
       if (this.sVoice.url === "") return;
       if (this.sVoice.url.split("http")[0] != "") return;
       this.sVoice.btnLoading = true;
-      const res = await axios.post(localStorage.addr + "/sendFriendMessage", {
-        sessionKey: localStorage.sessionKey,
-        target: this.$route.params.id,
-        messageChain: [
-          {
-            type: "Voice",
-            url: this.sVoice.url
-          }
-        ]
-      });
-      //   伪造一条假的
-      var obj = {
-        type: "FriendMessage",
-        sender: {
-          id: localStorage.qq
-        },
-        messageChain: [
-          {
-            id: res.messageId,
-            time: Date.now()
-              .toString()
-              .slice(0, 10),
-            type: "Source"
-          },
-          {
-            type: "Voice",
-            url: this.sVoice.url
-          }
-        ]
+      const chain = {
+        type: "Voice",
+        url: this.sVoice.url
       };
-      this.msgList.push(obj);
+      this.sendMsgg(chain);
       this.sVoice = {
         dialog: null,
         btnLoading: false,
