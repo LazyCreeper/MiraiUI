@@ -43,6 +43,15 @@
               <span>发送图片</span>
             </v-tooltip>
 
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn @click="sPoke.dialog = true">
+                  <v-icon v-bind="attrs" v-on="on">mdi-hand-pointing-right</v-icon>
+                </v-btn>
+              </template>
+              <span>戳一戳</span>
+            </v-tooltip>
+
             <v-btn>
               <v-icon>mdi-cog-outline</v-icon>
             </v-btn>
@@ -106,8 +115,40 @@
           </v-btn>
         </v-card-title>
         <v-card-text>
-          <v-text-field label="音频URL" prepend-icon="mdi-web" outlined v-model="sVoice.url"></v-text-field>
+          <v-text-field
+            label="音频URL"
+            prepend-icon="mdi-web"
+            outlined
+            v-model="sVoice.url"
+            class="pt-4"
+          ></v-text-field>
           <v-btn elevation="2" block x-large :loading="sVoice.btnLoading" @click="sendVoice">发送</v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <!-- 发送戳一戳对话框 -->
+    <v-dialog v-model="sPoke.dialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">选择戳一戳类型</span>
+          <small>（目前只有戳一戳和放大招可用）</small>
+          <v-spacer></v-spacer>
+          <v-btn icon plain @click="sPoke.dialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-select
+            label="选择类型"
+            outlined
+            v-model="sPoke.name"
+            :items="sPoke.items"
+            item-text="name"
+            item-value="type"
+            return-object
+          ></v-select>
+          <v-btn elevation="2" block x-large :loading="sPoke.btnLoading" @click="sendPoke">发送</v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -147,7 +188,20 @@ export default {
     sVoice: {
       dialog: null,
       btnLoading: false,
-      file: ""
+      url: ""
+    },
+    sPoke: {
+      dialog: null,
+      btnLoading: false,
+      name: { name: "戳一戳", type: "Poke" },
+      items: [
+        { name: "戳一戳", type: "Poke" },
+        { name: "比心", type: "ShowLove" },
+        { name: "点赞", type: "Like" },
+        { name: "心碎", type: "Heartbroken" },
+        { name: "666", type: "SixSixSix" },
+        { name: "放大招", type: "FangDaZhao" }
+      ]
     }
   }),
 
@@ -354,6 +408,18 @@ export default {
         btnLoading: false,
         file: ""
       };
+    },
+
+    // 发送戳一戳
+    async sendPoke() {
+      this.sPoke.btnLoading = true;
+      const chain = {
+        type: "Poke",
+        name: this.sPoke.name.type
+      };
+      this.sendMsgg(chain);
+      this.sPoke.dialog = false,
+      this.sPoke.btnLoading = false
     }
   }
 };
