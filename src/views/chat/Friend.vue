@@ -153,7 +153,6 @@ export default {
 
   created() {
     this.launchWs();
-    console.log(this.$store.state.chat.id);
   },
 
   destroyed() {
@@ -221,7 +220,6 @@ export default {
       if (msg.data.type != "FriendMessage") return;
       if (msg.data.sender.id != this.$route.params.id) return;
       this.msgList.push(msg.data);
-      console.log(msg);
     },
 
     // 处理收到的消息
@@ -328,6 +326,7 @@ export default {
       if (this.sImg.url === "") return;
       if (this.sImg.url.split("http")[0] != "") return;
       this.sImg.btnLoading = true;
+
       const res = await axios.post(localStorage.addr + "/sendFriendMessage", {
         sessionKey: localStorage.sessionKey,
         target: this.$route.params.id,
@@ -359,9 +358,11 @@ export default {
         ]
       };
       this.msgList.push(obj);
-      this.sImg.url = "";
-      this.sImg.btnLoading = false;
-      this.sImg.dialog = false;
+      this.sImg.url = {
+        dialog: null,
+        btnLoading: false,
+        file: ""
+      };
     },
 
     // 发送语音
