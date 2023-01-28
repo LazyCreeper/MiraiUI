@@ -70,7 +70,7 @@
     <v-dialog v-model="sImg.dialog" max-width="600px">
       <v-card>
         <v-card-title>
-          <span class="text-h5">上传图片</span>
+          <span class="text-h5">发送图片</span>
           <v-spacer></v-spacer>
           <v-btn icon plain @click="sImg.dialog = false">
             <v-icon>mdi-close</v-icon>
