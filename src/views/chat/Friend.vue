@@ -299,6 +299,11 @@ export default {
               "<a target='_blank' href=" + msg[i].url + ">[图片]</a>"
             );
             break;
+          case "FlashImage":
+            合并の.push(
+              "<a target='_blank' href=" + msg[i].url + ">[闪照]</a>"
+            );
+            break;
           case "Face":
             合并の.push("[" + msg[i].name + "]");
             break;
