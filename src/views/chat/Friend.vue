@@ -296,12 +296,16 @@ export default {
             break;
           case "Image":
             合并の.push(
-              "<a target='_blank' href=" + msg[i].url + ">[图片]</a>"
+              "<img src=" +
+                msg[i].url +
+                " referrerPolicy='no-referrer' style='max-width: 15%'>"
             );
             break;
           case "FlashImage":
             合并の.push(
-              "<a target='_blank' href=" + msg[i].url + ">[闪照]</a>"
+              "<img src=" +
+                msg[i].url +
+                " referrerPolicy='no-referrer' style='max-width: 15%'>"
             );
             break;
           case "Face":
