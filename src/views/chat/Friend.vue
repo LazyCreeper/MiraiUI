@@ -281,6 +281,11 @@ export default {
       var 合并の = [];
       for (var i = 1; i < msg.length; i++) {
         switch (msg[i].type) {
+          case "Quote": {
+            let 哎 = `<blockquote style="padding-left: 10px;margin-bottom: 10px;border-left: 4px solid #1fffeba1"><span>${msg[i].origin[0].text}</span><footer style="color: #818181;font-size:13px">来自： ${msg[i].senderId} | MsgID: ${msg[i].id}</footer></blockquote>`;
+            合并の.push(哎);
+            break;
+          }
           case "Plain":
             合并の.push(
               msg[i].text
@@ -327,7 +332,7 @@ export default {
           }
         }
       }
-      return 合并の.join();
+      return 合并の.join("");
     },
 
     // 发送消息
@@ -418,8 +423,7 @@ export default {
         name: this.sPoke.name.type
       };
       this.sendMsgg(chain);
-      this.sPoke.dialog = false,
-      this.sPoke.btnLoading = false
+      (this.sPoke.dialog = false), (this.sPoke.btnLoading = false);
     }
   }
 };
