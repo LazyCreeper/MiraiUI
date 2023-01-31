@@ -127,14 +127,21 @@
       <v-list dense>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-subtitle>群成员列表</v-list-item-subtitle>
+            <v-list-item-subtitle>群成员列表（{{ groupMemberList.length }}）</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item v-if="groupMemberList[groupMemberList.length-1].permission === 'OWNER'">
+          <v-list-item-content>
+            <v-list-item-title>{{groupMemberList[groupMemberList.length-1].memberName}}</v-list-item-title>
+            <v-list-item-subtitle>【群主】{{ groupMemberList[groupMemberList.length-1].id }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
 
         <v-list-item v-for="(gMList, i) in groupMemberList" :key="i">
-          <v-list-item-content>
+          <v-list-item-content v-if="gMList.permission != 'OWNER'">
             <v-list-item-title>{{gMList.memberName}}</v-list-item-title>
-            <v-list-item-subtitle>{{ gMList.id }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ (gMList.permission === "ADMINISTRATOR") ? "【管理员】" : "" }} {{ gMList.id }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -217,6 +224,20 @@ export default {
           name: "群名1",
           permission: "MEMBER"
         }
+      },
+      {
+        id: 9876543210,
+        memberName: "",
+        specialTitle: "群头衔",
+        permission: "OWNER",
+        joinTimestamp: 12345678,
+        lastSpeakTimestamp: 8765432,
+        muteTimeRemaining: 0,
+        group: {
+          id: 54321,
+          name: "群名2",
+          permission: "MEMBER"
+        }
       }
     ],
     friendProfile: {
@@ -290,7 +311,17 @@ export default {
           "&target=" +
           o.id
       );
-      this.groupMemberList = gMemberList.data;
+      this.groupMemberList = gMemberList.data.sort(function(a, b) {
+        var x = a.permission.toLowerCase();
+        var y = b.permission.toLowerCase();
+        if (x < y) {
+          return -1;
+        }
+        if (x > y) {
+          return 1;
+        }
+        return 0;
+      });
     }
   }
 };
