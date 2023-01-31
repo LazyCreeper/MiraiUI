@@ -244,7 +244,7 @@ export default {
       dialog: null,
       btnLoading: false,
       xml: ""
-    }
+    },
   }),
 
   created() {
@@ -367,9 +367,16 @@ export default {
             合并の.push(哎);
             break;
           }
-          case "App":
-            合并の.push(msg[i].content);
+          case "App": {
+            const content = JSON.parse(msg[i].content)
+            let 哎 = `【APP消息】${content.meta.messages.title}<br>
+                Desc: ${content.meta.messages.desc}<br>
+                Tag: ${content.meta.messages.tag}<br>
+                Url: <a href="${content.meta.messages.jumpUrl}" target="_blank">点击跳转</a>
+            `
+            合并の.push(哎);
             break;
+          }
           case "Poke":
             合并の.push("[" + msg[i].name + "]");
             break;
@@ -400,6 +407,7 @@ export default {
         target: this.$route.params.id,
         messageChain: [chain]
       });
+      console.log(res);
       //   伪造一条假的
       var obj = {
         type: "FriendMessage",
