@@ -29,6 +29,11 @@ const routes = [
     name: "chatWithFriend",
     component: () => import("../views/chat/Friend.vue"),
   },
+  {
+    path: "/chat/group/:id",
+    name: "chatWithFriend",
+    component: () => import("../views/chat/Group.vue"),
+  },
 ];
 
 const router = new VueRouter({
