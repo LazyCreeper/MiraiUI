@@ -124,10 +124,17 @@
 
     <!-- 群成员列表 -->
     <v-navigation-drawer app clipped right v-if="$route.path.split('/')[2] === 'group'">
-      <v-list>
-        <v-list-item v-for="n in 5" :key="n" link>
+      <v-list dense>
+        <v-list-item>
           <v-list-item-content>
-            <v-list-item-title>TODO: 群成员 {{ n }}</v-list-item-title>
+            <v-list-item-subtitle>群成员列表</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item v-for="(gMList, i) in groupMemberList" :key="i">
+          <v-list-item-content>
+            <v-list-item-title>{{gMList.memberName}}</v-list-item-title>
+            <v-list-item-subtitle>{{ gMList.id }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -196,6 +203,22 @@ export default {
         permission: "MEMBER"
       }
     ],
+    groupMemberList: [
+      {
+        id: 1234567890,
+        memberName: "",
+        permission: "MEMBER",
+        specialTitle: "群头衔",
+        joinTimestamp: 12345678,
+        lastSpeakTimestamp: 8765432,
+        muteTimeRemaining: 0,
+        group: {
+          id: 12345,
+          name: "群名1",
+          permission: "MEMBER"
+        }
+      }
+    ],
     friendProfile: {
       email: "email",
       age: 18,
@@ -243,6 +266,7 @@ export default {
       };
       this.$store.commit("chat", obj);
       this.getFriendProfile(obj);
+      this.getGroupmemberList(obj);
     },
 
     // 获取好友信息
@@ -255,6 +279,18 @@ export default {
           o.id
       );
       this.friendProfile = fProfile;
+    },
+
+    // 获取群成员列表
+    async getGroupmemberList(o) {
+      const { data: gMemberList } = await axios.get(
+        localStorage.addr +
+          "/memberList?sessionKey=" +
+          localStorage.sessionKey +
+          "&target=" +
+          o.id
+      );
+      this.groupMemberList = gMemberList.data;
     }
   }
 };
