@@ -4,13 +4,13 @@
       <v-list-item
         three-line
         v-for="(mList, i) in msgList"
-        :class="(Number($route.params.id) === mList.sender.id) ? 'wtf': 'dir-rtl'"
+        :class="(Number($route.params.id) === mList.sender.group.id) ? 'wtf': 'dir-rtl'"
         :key="i"
         style="width: 100%"
       >
         <v-list-item-avatar>
           <v-img
-            :src="(Number($route.params.id) === mList.sender.id) ? 'https://q1.qlogo.cn/g?b=qq&nk='+$route.params.id+'&s=160' : 'https://q1.qlogo.cn/g?b=qq&nk='+mList.sender.id+'&s=160' "
+            :src="(Number($route.params.id) === mList.sender.group.id) ? 'https://q1.qlogo.cn/g?b=qq&nk='+mList.sender.id+'&s=160' : 'https://q1.qlogo.cn/g?b=qq&nk='+qq+'&s=160' "
           />
         </v-list-item-avatar>
         <v-list-item-content>
@@ -214,6 +214,7 @@ import xmlConvert from "xml-js";
 export default {
   name: "ChatWithGroup",
   data: () => ({
+    qq: null,
     dialog: null,
     tab: null,
     socket: null,
@@ -250,6 +251,7 @@ export default {
   }),
 
   created() {
+    this.qq = localStorage.qq
     this.launchWs();
   },
 
@@ -314,9 +316,11 @@ export default {
 
     onMsg(raw) {
       var msg = JSON.parse(raw.data);
-      //   判断是不是好友消息
-      if (msg.data.type != "FriendMessage") return;
-      if (msg.data.sender.id != this.$route.params.id) return;
+      //   判断是不是群消息
+      if (msg.data.type != "GroupMessage") return;
+      if (msg.data.sender.group.id != this.$route.params.id) return;
+      // console.log(msg)
+      // console.log(this.$route.params.id)
       this.msgList.push(msg.data);
     },
 
@@ -404,7 +408,7 @@ export default {
 
     // 发送消息
     async sendMsgg(chain) {
-      const res = await axios.post(localStorage.addr + "/sendFriendMessage", {
+      const res = await axios.post(localStorage.addr + "/sendGroupMessage", {
         sessionKey: localStorage.sessionKey,
         target: this.$route.params.id,
         messageChain: [chain]
@@ -412,9 +416,12 @@ export default {
       console.log(res);
       //   伪造一条假的
       var obj = {
-        type: "FriendMessage",
+        type: "GroupMessage",
         sender: {
-          id: localStorage.qq
+          group: {
+            id: this.$route.params.id
+          },
+          id: this.qq
         },
         messageChain: [
           {
