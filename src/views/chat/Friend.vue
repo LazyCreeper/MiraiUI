@@ -202,7 +202,7 @@ export default {
         { name: "666", type: "SixSixSix" },
         { name: "放大招", type: "FangDaZhao" }
       ]
-    }
+    },
   }),
 
   created() {
@@ -337,6 +337,13 @@ export default {
           case "MusicShare": {
             let 哎 = `<span>【分享】《${msg[i].title}》 · ${msg[i].summary}</span><br><img src="${msg[i].pictureUrl}"><br><a href="${msg[i].jumpUrl}" target="_blank">前往播放页</a>  |  <a href="${msg[i].musicUrl}" target="_blank">点击收听</a>`;
             合并の.push(哎);
+            break;
+          }
+          case "Forward": {
+            // 我承认这里有我懒和不会的成分，但是是真的处于性能考虑
+            let 哎 = `[转发的聊天记录] <small>（出于性能原因暂不支持浏览，请在浏览器控制台查看）</small>`;
+            合并の.push(哎);
+            console.log(msg[i].nodeList)
             break;
           }
         }
