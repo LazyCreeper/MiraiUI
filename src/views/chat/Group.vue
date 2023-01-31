@@ -42,16 +42,7 @@
               </template>
               <span>发送图片</span>
             </v-tooltip>
-
-            <v-tooltip top>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn @click="sPoke.dialog = true">
-                  <v-icon v-bind="attrs" v-on="on">mdi-hand-pointing-right</v-icon>
-                </v-btn>
-              </template>
-              <span>戳一戳</span>
-            </v-tooltip>
-
+            
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn @click="sXml.dialog = true">
@@ -138,33 +129,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- 发送戳一戳对话框 -->
-    <v-dialog v-model="sPoke.dialog" max-width="600px">
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">选择戳一戳类型</span>
-          <small>（目前只有戳一戳和放大招可用）</small>
-          <v-spacer></v-spacer>
-          <v-btn icon plain @click="sPoke.dialog = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-card-text>
-          <v-select
-            label="选择类型"
-            outlined
-            v-model="sPoke.name"
-            :items="sPoke.items"
-            item-text="name"
-            item-value="type"
-            return-object
-            class="pt-4"
-          ></v-select>
-          <v-btn elevation="2" block x-large :loading="sPoke.btnLoading" @click="sendPoke">发送</v-btn>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
     <!-- 发送XML -->
     <v-dialog v-model="sXml.dialog" max-width="600px">
       <v-card>
@@ -229,19 +193,6 @@ export default {
       dialog: null,
       btnLoading: false,
       url: ""
-    },
-    sPoke: {
-      dialog: null,
-      btnLoading: false,
-      name: { name: "戳一戳", type: "Poke" },
-      items: [
-        { name: "戳一戳", type: "Poke" },
-        { name: "比心", type: "ShowLove" },
-        { name: "点赞", type: "Like" },
-        { name: "心碎", type: "Heartbroken" },
-        { name: "666", type: "SixSixSix" },
-        { name: "放大招", type: "FangDaZhao" }
-      ]
     },
     sXml: {
       dialog: null,
