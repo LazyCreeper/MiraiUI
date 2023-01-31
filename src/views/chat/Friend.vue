@@ -52,6 +52,15 @@
               <span>戳一戳</span>
             </v-tooltip>
 
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn @click="sXml.dialog = true">
+                  <v-icon v-bind="attrs" v-on="on">mdi-file-xml-box</v-icon>
+                </v-btn>
+              </template>
+              <span>XML</span>
+            </v-tooltip>
+
             <v-btn>
               <v-icon>mdi-cog-outline</v-icon>
             </v-btn>
@@ -147,8 +156,36 @@
             item-text="name"
             item-value="type"
             return-object
+            class="pt-4"
           ></v-select>
           <v-btn elevation="2" block x-large :loading="sPoke.btnLoading" @click="sendPoke">发送</v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <!-- 发送XML -->
+    <v-dialog v-model="sXml.dialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">发送XML消息</span>
+          <v-spacer></v-spacer>
+          <v-btn icon plain @click="sXml.dialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-textarea
+            label="xml"
+            v-model="sXml.xml"
+            outlined
+            clearable
+            auto-grow
+            counter
+            width="100"
+            rows="5"
+            class="pt-4"
+          ></v-textarea>
+          <v-btn elevation="2" block x-large :loading="sXml.btnLoading" @click="sendXml">发送</v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -203,6 +240,11 @@ export default {
         { name: "放大招", type: "FangDaZhao" }
       ]
     },
+    sXml: {
+      dialog: null,
+      btnLoading: false,
+      xml: ""
+    }
   }),
 
   created() {
@@ -343,7 +385,7 @@ export default {
             // 我承认这里有我懒和不会的成分，但是是真的处于性能考虑
             let 哎 = `[转发的聊天记录] <small>（出于性能原因暂不支持浏览，请在浏览器控制台查看）</small>`;
             合并の.push(哎);
-            console.log(msg[i].nodeList)
+            console.log(msg[i].nodeList);
             break;
           }
         }
@@ -440,6 +482,22 @@ export default {
       };
       this.sendMsgg(chain);
       (this.sPoke.dialog = false), (this.sPoke.btnLoading = false);
+    },
+
+    // 发送XML
+    async sendXml() {
+      if (this.sXml.xml === "") return;
+      this.sXml.btnLoading = true;
+      const chain = {
+        type: "Xml",
+        xml: this.sXml.xml
+      };
+      this.sendMsgg(chain);
+      this.sXml = {
+        dialog: null,
+        btnLoading: false,
+        xml: ""
+      };
     }
   }
 };
