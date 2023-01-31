@@ -76,10 +76,12 @@
             counter
             width="100"
             rows="1"
+            @keyup.ctrl.enter="sendMsg"
           ></v-textarea>
         </v-col>
         <v-col sm="2">
           <v-btn elevation="2" block x-large @click="sendMsg">发送</v-btn>
+          (Ctrl+Enter) 也可发送
         </v-col>
       </v-row>
     </div>
