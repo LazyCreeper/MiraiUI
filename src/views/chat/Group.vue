@@ -575,7 +575,9 @@ export default {
         target: this.sAt.target
       };
       this.sendMsgg(chain);
-      (this.sAt.dialog = false), (this.sAt.btnLoading = false);
+      this.sAt.dialog = false
+      this.sAt.btnLoading = false
+      this.sAt.target = ''
     },
 
     // 发送XML
