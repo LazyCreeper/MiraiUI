@@ -283,6 +283,7 @@ export default {
     dialog: null,
     tab: null,
     socket: null,
+    socketForMsg: null,
     msgList: [],
     sMsg: null,
     sAt: {
@@ -361,7 +362,19 @@ export default {
       this.socket = new WebSocket(
         "ws://" +
           localStorage.addr.split("//")[1] +
-          "/all?verifyKey=" +
+          "/message?verifyKey=" +
+          localStorage.verifyKey +
+          "&qq=" +
+          localStorage.qq +
+          "&sessionKey=" +
+          localStorage.sessionKey
+      );
+
+      this.socketForMsg = true
+      this.socketForMsg = new WebSocket(
+        "ws://" +
+          localStorage.addr.split("//")[1] +
+          "/event?verifyKey=" +
           localStorage.verifyKey +
           "&qq=" +
           localStorage.qq +
@@ -376,6 +389,9 @@ export default {
 
       // 监听 socket 消息
       this.socket.onmessage = this.onMsg;
+
+      // 监听事件
+      this.socketForMsg.onmessage = this.onEvent;
     },
 
     wsOpen() {
@@ -384,6 +400,26 @@ export default {
 
     wsError() {
       console.error("Websocket 连接错误");
+    },
+
+    onEvent(raw) {
+      var evt = JSON.parse(raw.data);
+      // 判断事件类型
+      switch (evt.data.type) {
+        case "BotGroupPermissionChangeEvent": {
+          if (evt.data.group.id != this.$route.params.id) return;
+          this.snackbar.text = `你已从原来的${evt.data.origin}更改为${evt.data.current}`;
+          this.snackbar.color = "primary";
+          this.snackbar.status = true;
+          break;
+        }
+        case "BotMuteEvent": {
+          this.snackbar.text = `你已被${evt.data.operator.memberName}禁言 ${evt.data.durationSeconds/60} 分钟`;
+          this.snackbar.color = "red accent-2";
+          this.snackbar.status = true;
+          break;
+        }
+      }
     },
 
     onMsg(raw) {
