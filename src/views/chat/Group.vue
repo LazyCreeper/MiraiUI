@@ -370,7 +370,7 @@ export default {
           localStorage.sessionKey
       );
 
-      this.socketForMsg = true
+      this.socketForMsg = true;
       this.socketForMsg = new WebSocket(
         "ws://" +
           localStorage.addr.split("//")[1] +
@@ -414,8 +414,15 @@ export default {
           break;
         }
         case "BotMuteEvent": {
-          this.snackbar.text = `你已被${evt.data.operator.memberName}禁言 ${evt.data.durationSeconds/60} 分钟`;
+          this.snackbar.text = `你已被${evt.data.operator.memberName}禁言 ${evt
+            .data.durationSeconds / 60} 分钟`;
           this.snackbar.color = "red accent-2";
+          this.snackbar.status = true;
+          break;
+        }
+        case "BotUnmuteEvent": {
+          this.snackbar.text = `你已被${evt.data.operator.memberName}取消禁言`;
+          this.snackbar.color = "success";
           this.snackbar.status = true;
           break;
         }
@@ -527,6 +534,15 @@ export default {
         target: this.$route.params.id,
         messageChain: [chain]
       });
+
+      // 万一发不出去呢
+      if (res.data.code != 0) {
+        this.snackbar.text = res.data.msg;
+        this.snackbar.color = "red accent-2";
+        this.snackbar.status = true;
+        return
+      }
+      
       //   伪造一条假的
       var obj = {
         type: "GroupMessage",
