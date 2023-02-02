@@ -133,13 +133,13 @@
 
         <v-list-item v-if="groupMemberList[groupMemberList.length-1].permission === 'OWNER'">
           <v-list-item-content>
-            <v-list-item-title>{{groupMemberList[groupMemberList.length-1].memberName}}</v-list-item-title>
+            <v-list-item-title :title="'入群时间：'+new Date(Number(groupMemberList[groupMemberList.length-1].joinTimestamp+'000')).toLocaleString()+' | 上次发言：'+new Date(Number(groupMemberList[groupMemberList.length-1].lastSpeakTimestamp+'000')).toLocaleString()">{{groupMemberList[groupMemberList.length-1].memberName}}</v-list-item-title>
             <v-list-item-subtitle>【群主】{{ groupMemberList[groupMemberList.length-1].id }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
 
         <v-list-item v-for="(gMList, i) in groupMemberList" :key="i">
-          <v-list-item-content v-if="gMList.permission != 'OWNER'">
+          <v-list-item-content v-if="gMList.permission != 'OWNER'" :title="'入群时间：'+new Date(Number(gMList.joinTimestamp+'000')).toLocaleString()+' | 上次发言：'+new Date(Number(gMList.lastSpeakTimestamp+'000')).toLocaleString()+' | 禁言剩余：'+gMList.muteTimeRemaining+'分钟'">
             <v-list-item-title>{{gMList.memberName}}</v-list-item-title>
             <v-list-item-subtitle>{{ (gMList.permission === "ADMINISTRATOR") ? "【管理员】" : "" }} {{ gMList.id }}</v-list-item-subtitle>
           </v-list-item-content>
