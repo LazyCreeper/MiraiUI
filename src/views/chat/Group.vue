@@ -363,6 +363,9 @@ export default {
           case "At":
             合并の.push("@" + msg[i].target + " ");
             break;
+          case "AtAll":
+            合并の.push("@全体成员 ");
+            break;
           case "Plain":
             合并の.push(
               msg[i].text
