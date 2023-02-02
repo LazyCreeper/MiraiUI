@@ -127,7 +127,7 @@
       <v-list dense>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-subtitle>群成员列表（{{ groupMemberList.length }}）</v-list-item-subtitle>
+            <v-list-item-subtitle>群成员（{{ groupMemberList.length+1 }}）</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
 
