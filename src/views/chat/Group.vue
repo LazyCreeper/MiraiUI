@@ -406,6 +406,7 @@ export default {
       var evt = JSON.parse(raw.data);
       // 判断事件类型
       switch (evt.data.type) {
+        // 身份变更
         case "BotGroupPermissionChangeEvent": {
           if (evt.data.group.id != this.$route.params.id) return;
           this.snackbar.text = `你已从原来的${evt.data.origin}更改为${evt.data.current}`;
@@ -413,6 +414,8 @@ export default {
           this.snackbar.status = true;
           break;
         }
+
+        // 禁言
         case "BotMuteEvent": {
           this.snackbar.text = `你已被${evt.data.operator.memberName}禁言 ${evt
             .data.durationSeconds / 60} 分钟`;
@@ -420,12 +423,16 @@ export default {
           this.snackbar.status = true;
           break;
         }
+
+        // 取消禁言
         case "BotUnmuteEvent": {
           this.snackbar.text = `你已被${evt.data.operator.memberName}取消禁言`;
           this.snackbar.color = "success";
           this.snackbar.status = true;
           break;
         }
+
+        // 戳一戳（好像不能用
         case "NudgeEvent": {
           var obj = {
             type: "GroupMessage",
@@ -452,6 +459,8 @@ export default {
           this.msgList.push(obj);
           break;
         }
+
+        // 全员禁言
         case "GroupMuteAllEvent": {
           var o = null, c = null
           if(evt.data.origin === false) {
