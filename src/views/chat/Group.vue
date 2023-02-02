@@ -18,21 +18,21 @@
             <v-chip
               label
               x-small
-              class="mr-1"
+              class="mr-1 caption"
               color="orange"
               v-if="mList.sender.permission === 'OWNER'"
             >群主</v-chip>
             <v-chip
               label
               x-small
-              class="mr-1"
+              class="mr-1 caption"
               color="green"
               v-else-if="mList.sender.permission === 'ADMINISTRATOR'"
             >管理员</v-chip>
             <v-chip
               label
               x-small
-              class="mr-1"
+              class="mr-1 caption"
               color="purple"
               v-if="mList.sender.specialTitle"
             >{{ mList.sender.specialTitle }}</v-chip>
