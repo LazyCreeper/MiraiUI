@@ -214,13 +214,12 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-snackbar
-      v-model="snackbar.status"
-      :timeout="snackbar.timeout"
-      top
-      right
-      text
-    >{{ snackbar.text }}</v-snackbar>
+    <v-snackbar v-model="snackbar.status" :timeout="snackbar.timeout" top :color="snackbar.color">
+      {{ snackbar.text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn text v-bind="attrs" @click="snackbar.status = false">关闭</v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -298,10 +297,11 @@ export default {
     },
     "msgList.length": function(val) {
       // 有新消息时，自动滚到最底
-      this.autoScroll && this.$nextTick(() => {
-        var chatArea = document.getElementById("chatArea");
-        chatArea.scrollTop = chatArea.scrollHeight;
-      });
+      this.autoScroll &&
+        this.$nextTick(() => {
+          var chatArea = document.getElementById("chatArea");
+          chatArea.scrollTop = chatArea.scrollHeight;
+        });
 
       // 窗口内有超过一组消息时，删除第一条消息
       if (val > this.maxMsgLog) this.msgList.shift();
@@ -360,6 +360,9 @@ export default {
             合并の.push(哎);
             break;
           }
+          case "At":
+            合并の.push("@" + msg[i].target + " ");
+            break;
           case "Plain":
             合并の.push(
               msg[i].text
@@ -547,6 +550,7 @@ export default {
     setMaxMsgLog() {
       localStorage.setItem("maxMsgLog", this.maxMsgLog);
       this.snackbar.text = "保存成功";
+      this.snackbar.color = "success";
       this.snackbar.status = true;
     }
   }
