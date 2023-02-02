@@ -434,7 +434,7 @@ export default {
 
         // 戳一戳（好像不能用
         case "NudgeEvent": {
-          var obj = {
+          let obj = {
             type: "GroupMessage",
             sender: {
               group: {
@@ -504,6 +504,44 @@ export default {
           }
           this.snackbar.text = `管理员${evt.data.operator.memberName}${o}了坦白说`;
           this.snackbar.color = c;
+          this.snackbar.status = true;
+          break;
+        }
+
+        // 有新人入群（暂不确定能不能用
+        case "MemberJoinEvent": {
+          let obj = {
+            type: "GroupMessage",
+            sender: {
+              group: {
+                id: this.$route.params.id
+              },
+              id: 10000
+            },
+            messageChain: [
+              {
+                id: 0,
+                time: Date.now()
+                  .toString()
+                  .slice(0, 10),
+                type: "Source"
+              },
+              {
+                type: "Plain",
+                text: `${evt.data.member.memberName}(${evt.data.member.id})加入了该群`
+              }
+            ]
+          };
+          this.msgList.push(obj);
+          break;
+        }
+
+        // 群名片改动
+        case "MemberCardChangeEvent": {
+          if (evt.data.member.group.id != this.$route.params.id) return;
+          if (evt.data.member.id != this.qq) return;
+          this.snackbar.text = `你的群名片已从${evt.data.origin}更改为${evt.data.current}`;
+          this.snackbar.color = 'primary';
           this.snackbar.status = true;
           break;
         }
