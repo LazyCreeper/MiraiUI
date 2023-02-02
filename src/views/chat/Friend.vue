@@ -461,6 +461,15 @@ export default {
         target: this.$route.params.id,
         messageChain: [chain]
       });
+
+      // 万一发不出去呢
+      if (res.data.code != 0) {
+        this.snackbar.text = res.data.msg;
+        this.snackbar.color = "red accent-2";
+        this.snackbar.status = true;
+        return
+      }
+      
       //   伪造一条假的
       var obj = {
         type: "FriendMessage",
