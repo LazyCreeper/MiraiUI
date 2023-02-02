@@ -203,12 +203,14 @@ export default {
       dialog: null,
       btnLoading: false,
       xml: ""
-    }
+    },
+    maxMsgLog: 64,
   }),
 
   created() {
     this.qq = localStorage.qq;
     this.launchWs();
+    if(localStorage.maxMsgLog) this.maxMsgLog = Number(localStorage.maxMsgLog)
   },
 
   destroyed() {
@@ -233,8 +235,8 @@ export default {
         chatArea.scrollTop = chatArea.scrollHeight;
       });
 
-      // 窗口内有超过一组消息时，清空聊天记录（待优化
-      if (val > 64) this.msgList = [];
+      // 窗口内有超过一组消息时，删除第一条消息
+      if (val > this.maxMsgLog) this.msgList.shift();
     }
   },
 
