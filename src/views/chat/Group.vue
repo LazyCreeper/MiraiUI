@@ -462,7 +462,7 @@ export default {
 
         // 全员禁言
         case "GroupMuteAllEvent": {
-          var o = null, c = null
+          let o = null, c = null
           if(evt.data.origin === false) {
             o = "开启"
             c = "red accent-a"
@@ -471,6 +471,22 @@ export default {
             c = "success"
           }
           this.snackbar.text = `管理员${evt.data.operator.memberName}${o}了全员禁言`;
+          this.snackbar.color = c;
+          this.snackbar.status = true;
+          break;
+        }
+
+        // 匿名聊天
+        case "GroupAllowAnonymousChatEvent": {
+          let o = null, c = null
+          if(evt.data.origin === false) {
+            o = "开启"
+            c = "success"
+          }else {
+            o = "关闭"
+            c = "red accent-a"
+          }
+          this.snackbar.text = `管理员${evt.data.operator.memberName}${o}了匿名聊天`;
           this.snackbar.color = c;
           this.snackbar.status = true;
           break;
