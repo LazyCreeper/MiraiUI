@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-system-bar app dark height="30">
-      <span>WebQQ</span>
+      <span>Mirai</span>
       <v-spacer></v-spacer>
       <v-icon>mdi-wifi-strength-4</v-icon>
       <v-icon>mdi-signal-cellular-outline</v-icon>
