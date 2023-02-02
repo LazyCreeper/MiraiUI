@@ -491,6 +491,22 @@ export default {
           this.snackbar.status = true;
           break;
         }
+
+        // 坦白说
+        case "GroupAllowConfessTalkEvent": {
+          let o = null, c = null
+          if(evt.data.origin === false) {
+            o = "开启"
+            c = "success"
+          }else {
+            o = "关闭"
+            c = "red accent-a"
+          }
+          this.snackbar.text = `管理员${evt.data.operator.memberName}${o}了坦白说`;
+          this.snackbar.color = c;
+          this.snackbar.status = true;
+          break;
+        }
       }
     },
 
