@@ -14,6 +14,12 @@
           />
         </v-list-item-avatar>
         <v-list-item-content>
+          <v-list-item-title class="pb-1">
+            <v-chip label x-small class="mr-1" color="orange" v-if="mList.sender.permission === 'OWNER'">群主</v-chip>
+            <v-chip label x-small class="mr-1" color="green" v-else-if="mList.sender.permission === 'ADMINISTRATOR'">管理员</v-chip>
+            <v-chip label x-small class="mr-1" color="purple" v-if="mList.sender.specialTitle">{{ mList.sender.specialTitle }}</v-chip>
+            {{ mList.sender.memberName }}
+          </v-list-item-title>
           <v-list-item-title v-html="processMsg(mList.messageChain)"></v-list-item-title>
           <v-list-item-subtitle>{{ new Date(Number(mList.messageChain[0].time+"000")).toLocaleString() }}</v-list-item-subtitle>
         </v-list-item-content>
@@ -42,7 +48,7 @@
               </template>
               <span>发送图片</span>
             </v-tooltip>
-            
+
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn @click="sXml.dialog = true">
@@ -71,8 +77,7 @@
           ></v-textarea>
         </v-col>
         <v-col sm="2">
-          <v-btn elevation="2" block x-large @click="sendMsg">发送</v-btn>
-          (Ctrl+Enter) 也可发送
+          <v-btn elevation="2" block x-large @click="sendMsg">发送</v-btn>(Ctrl+Enter) 也可发送
         </v-col>
       </v-row>
     </div>
@@ -198,11 +203,11 @@ export default {
       dialog: null,
       btnLoading: false,
       xml: ""
-    },
+    }
   }),
 
   created() {
-    this.qq = localStorage.qq
+    this.qq = localStorage.qq;
     this.launchWs();
   },
 
@@ -325,12 +330,12 @@ export default {
             break;
           }
           case "App": {
-            const content = JSON.parse(msg[i].content)
+            const content = JSON.parse(msg[i].content);
             let 哎 = `【APP消息】${content.meta.messages.title}<br>
                 Desc: ${content.meta.messages.desc}<br>
                 Tag: ${content.meta.messages.tag}<br>
                 Url: <a href="${content.meta.messages.jumpUrl}" target="_blank">点击跳转</a>
-            `
+            `;
             合并の.push(哎);
             break;
           }
