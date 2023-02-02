@@ -15,9 +15,27 @@
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title class="pb-1">
-            <v-chip label x-small class="mr-1" color="orange" v-if="mList.sender.permission === 'OWNER'">群主</v-chip>
-            <v-chip label x-small class="mr-1" color="green" v-else-if="mList.sender.permission === 'ADMINISTRATOR'">管理员</v-chip>
-            <v-chip label x-small class="mr-1" color="purple" v-if="mList.sender.specialTitle">{{ mList.sender.specialTitle }}</v-chip>
+            <v-chip
+              label
+              x-small
+              class="mr-1"
+              color="orange"
+              v-if="mList.sender.permission === 'OWNER'"
+            >群主</v-chip>
+            <v-chip
+              label
+              x-small
+              class="mr-1"
+              color="green"
+              v-else-if="mList.sender.permission === 'ADMINISTRATOR'"
+            >管理员</v-chip>
+            <v-chip
+              label
+              x-small
+              class="mr-1"
+              color="purple"
+              v-if="mList.sender.specialTitle"
+            >{{ mList.sender.specialTitle }}</v-chip>
             {{ mList.sender.memberName }}
           </v-list-item-title>
           <v-list-item-title v-html="processMsg(mList.messageChain)"></v-list-item-title>
@@ -58,9 +76,14 @@
               <span>XML</span>
             </v-tooltip>
 
-            <v-btn>
-              <v-icon>mdi-cog-outline</v-icon>
-            </v-btn>
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn @click="msgDialog = true">
+                  <v-icon v-bind="attrs" v-on="on">mdi-cog-outline</v-icon>
+                </v-btn>
+              </template>
+              <span>聊天框设置</span>
+            </v-tooltip>
           </v-btn-toggle>
         </v-col>
         <v-col sm="10">
@@ -160,6 +183,44 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <!-- 聊天框设置 -->
+    <!-- 这里UI难看，但是能用 -->
+    <v-dialog v-model="msgDialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">聊天框设置</span>
+          <v-spacer></v-spacer>
+          <v-btn icon plain @click="msgDialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-subheader class="pl-0">显示的聊天记录长度，超出后自动删除之前的。默认一组(64)</v-subheader>
+          <v-slider v-model="maxMsgLog" thumb-label min="2">
+            <template v-slot:append>
+              <v-text-field
+                v-model="maxMsgLog"
+                class="mt-0 pt-0"
+                hide-details
+                single-line
+                type="number"
+                style="width: 60px"
+              ></v-text-field>
+              <v-btn elevation="2" @click="setMaxMsgLog">保存</v-btn>
+            </template>
+          </v-slider>
+          <v-switch v-model="autoScroll" label="有新消息时是否滚动到最底部"></v-switch>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-snackbar
+      v-model="snackbar.status"
+      :timeout="snackbar.timeout"
+      top
+      right
+      text
+    >{{ snackbar.text }}</v-snackbar>
   </div>
 </template>
 
@@ -204,13 +265,20 @@ export default {
       btnLoading: false,
       xml: ""
     },
+    msgDialog: null,
     maxMsgLog: 64,
+    autoScroll: true,
+    snackbar: {
+      status: false,
+      text: null,
+      timeout: 2000
+    }
   }),
 
   created() {
     this.qq = localStorage.qq;
     this.launchWs();
-    if(localStorage.maxMsgLog) this.maxMsgLog = Number(localStorage.maxMsgLog)
+    if (localStorage.maxMsgLog) this.maxMsgLog = Number(localStorage.maxMsgLog);
   },
 
   destroyed() {
@@ -229,8 +297,8 @@ export default {
       this.msgList = [];
     },
     "msgList.length": function(val) {
-      // 有新消息时，自动滚到最底（待优化
-      this.$nextTick(() => {
+      // 有新消息时，自动滚到最底
+      this.autoScroll && this.$nextTick(() => {
         var chatArea = document.getElementById("chatArea");
         chatArea.scrollTop = chatArea.scrollHeight;
       });
@@ -473,6 +541,13 @@ export default {
         btnLoading: false,
         xml: ""
       };
+    },
+
+    // 设置最大聊天记录长度
+    setMaxMsgLog() {
+      localStorage.setItem("maxMsgLog", this.maxMsgLog);
+      this.snackbar.text = "保存成功";
+      this.snackbar.status = true;
     }
   }
 };
