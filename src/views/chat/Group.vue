@@ -78,6 +78,15 @@
 
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
+                <v-btn @click="sAt.dialog = true">
+                  <v-icon v-bind="attrs" v-on="on">mdi-at</v-icon>
+                </v-btn>
+              </template>
+              <span>At</span>
+            </v-tooltip>
+
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
                 <v-btn @click="msgDialog = true">
                   <v-icon v-bind="attrs" v-on="on">mdi-cog-outline</v-icon>
                 </v-btn>
@@ -184,6 +193,33 @@
       </v-card>
     </v-dialog>
 
+    <!-- 发送At -->
+    <v-dialog v-model="sAt.dialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">@</span>
+          <v-spacer></v-spacer>
+          <v-btn icon plain @click="sAt.dialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-select
+            label="选择类型"
+            outlined
+            v-model="sAt.name"
+            :items="sAt.items"
+            item-text="name"
+            item-value="type"
+            return-object
+            class="pt-4"
+          ></v-select>
+          <v-text-field v-if="sAt.name.type === 'At'" label="对方QQ号" outlined v-model="sAt.target"></v-text-field>
+          <v-btn elevation="2" block x-large :loading="sAt.btnLoading" @click="sendAt">发送</v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <!-- 聊天框设置 -->
     <!-- 这里UI难看，但是能用 -->
     <v-dialog v-model="msgDialog" max-width="600px">
@@ -249,6 +285,16 @@ export default {
     socket: null,
     msgList: [],
     sMsg: null,
+    sAt: {
+      dialog: null,
+      btnLoading: false,
+      name: { name: "@", type: "At" },
+      items: [
+        { name: "谁？", type: "At" },
+        { name: "全体成员", type: "AtAll" }
+      ],
+      target: ""
+    },
     sImg: {
       dialog: null,
       btnLoading: false,
@@ -521,15 +567,15 @@ export default {
       };
     },
 
-    // 发送戳一戳
-    async sendPoke() {
-      this.sPoke.btnLoading = true;
+    // 发送At
+    async sendAt() {
+      this.sAt.btnLoading = true;
       const chain = {
-        type: "Poke",
-        name: this.sPoke.name.type
+        type: this.sAt.name.type,
+        target: this.sAt.target
       };
       this.sendMsgg(chain);
-      (this.sPoke.dialog = false), (this.sPoke.btnLoading = false);
+      (this.sAt.dialog = false), (this.sAt.btnLoading = false);
     },
 
     // 发送XML
