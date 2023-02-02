@@ -445,7 +445,6 @@ export default {
         target: this.$route.params.id,
         messageChain: [chain]
       });
-      console.log(res);
       //   伪造一条假的
       var obj = {
         type: "GroupMessage",
