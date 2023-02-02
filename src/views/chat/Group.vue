@@ -426,6 +426,46 @@ export default {
           this.snackbar.status = true;
           break;
         }
+        case "NudgeEvent": {
+          var obj = {
+            type: "GroupMessage",
+            sender: {
+              group: {
+                id: this.$route.params.id
+              },
+              id: evt.data.fromId
+            },
+            messageChain: [
+              {
+                id: 0,
+                time: Date.now()
+                  .toString()
+                  .slice(0, 10),
+                type: "Source"
+              },
+              {
+                type: "Plain",
+                text: `${this.$route.params.id}${evt.data.action}${evt.data.target}${evt.data.suffix}`
+              }
+            ]
+          };
+          this.msgList.push(obj);
+          break;
+        }
+        case "GroupMuteAllEvent": {
+          var o = null, c = null
+          if(evt.data.origin === false) {
+            o = "开启"
+            c = "red accent-a"
+          }else {
+            o = "关闭"
+            c = "success"
+          }
+          this.snackbar.text = `管理员${evt.data.operator.memberName}${o}了全员禁言`;
+          this.snackbar.color = c;
+          this.snackbar.status = true;
+          break;
+        }
       }
     },
 
@@ -540,9 +580,9 @@ export default {
         this.snackbar.text = res.data.msg;
         this.snackbar.color = "red accent-2";
         this.snackbar.status = true;
-        return
+        return;
       }
-      
+
       //   伪造一条假的
       var obj = {
         type: "GroupMessage",
