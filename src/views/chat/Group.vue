@@ -417,6 +417,7 @@ export default {
 
         // 禁言
         case "BotMuteEvent": {
+          if (evt.data.operator.group.id != this.$route.params.id) return;
           this.snackbar.text = `你已被${evt.data.operator.memberName}禁言 ${evt
             .data.durationSeconds / 60} 分钟`;
           this.snackbar.color = "red accent-2";
@@ -426,6 +427,7 @@ export default {
 
         // 取消禁言
         case "BotUnmuteEvent": {
+          if (evt.data.operator.group.id != this.$route.params.id) return;
           this.snackbar.text = `你已被${evt.data.operator.memberName}取消禁言`;
           this.snackbar.color = "success";
           this.snackbar.status = true;
@@ -434,6 +436,7 @@ export default {
 
         // 戳一戳（好像不能用
         case "NudgeEvent": {
+          if (evt.data.subject.id != this.$route.params.id) return;
           let obj = {
             type: "GroupMessage",
             sender: {
@@ -452,7 +455,7 @@ export default {
               },
               {
                 type: "Plain",
-                text: `${this.$route.params.id}${evt.data.action}${evt.data.target}${evt.data.suffix}`
+                text: `${evt.data.fromId}${evt.data.action}${evt.data.target}${evt.data.suffix}`
               }
             ]
           };
@@ -462,6 +465,7 @@ export default {
 
         // 全员禁言
         case "GroupMuteAllEvent": {
+          if (evt.data.group.id != this.$route.params.id) return;
           let o = null, c = null
           if(evt.data.origin === false) {
             o = "开启"
@@ -478,6 +482,7 @@ export default {
 
         // 匿名聊天
         case "GroupAllowAnonymousChatEvent": {
+          if (evt.data.group.id != this.$route.params.id) return;
           let o = null, c = null
           if(evt.data.origin === false) {
             o = "开启"
@@ -494,6 +499,7 @@ export default {
 
         // 坦白说
         case "GroupAllowConfessTalkEvent": {
+          if (evt.data.group.id != this.$route.params.id) return;
           let o = null, c = null
           if(evt.data.origin === false) {
             o = "开启"
@@ -510,6 +516,7 @@ export default {
 
         // 有新人入群（暂不确定能不能用
         case "MemberJoinEvent": {
+          if (evt.data.member.group.id != this.$route.params.id) return;
           let obj = {
             type: "GroupMessage",
             sender: {
