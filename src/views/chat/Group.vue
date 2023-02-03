@@ -466,13 +466,14 @@ export default {
         // 全员禁言
         case "GroupMuteAllEvent": {
           if (evt.data.group.id != this.$route.params.id) return;
-          let o = null, c = null
-          if(evt.data.origin === false) {
-            o = "开启"
-            c = "red accent-a"
-          }else {
-            o = "关闭"
-            c = "success"
+          let o = null,
+            c = null;
+          if (evt.data.origin === false) {
+            o = "开启";
+            c = "red accent-a";
+          } else {
+            o = "关闭";
+            c = "success";
           }
           this.snackbar.text = `管理员${evt.data.operator.memberName}${o}了全员禁言`;
           this.snackbar.color = c;
@@ -483,13 +484,14 @@ export default {
         // 匿名聊天
         case "GroupAllowAnonymousChatEvent": {
           if (evt.data.group.id != this.$route.params.id) return;
-          let o = null, c = null
-          if(evt.data.origin === false) {
-            o = "开启"
-            c = "success"
-          }else {
-            o = "关闭"
-            c = "red accent-a"
+          let o = null,
+            c = null;
+          if (evt.data.origin === false) {
+            o = "开启";
+            c = "success";
+          } else {
+            o = "关闭";
+            c = "red accent-a";
           }
           this.snackbar.text = `管理员${evt.data.operator.memberName}${o}了匿名聊天`;
           this.snackbar.color = c;
@@ -500,13 +502,14 @@ export default {
         // 坦白说
         case "GroupAllowConfessTalkEvent": {
           if (evt.data.group.id != this.$route.params.id) return;
-          let o = null, c = null
-          if(evt.data.origin === false) {
-            o = "开启"
-            c = "success"
-          }else {
-            o = "关闭"
-            c = "red accent-a"
+          let o = null,
+            c = null;
+          if (evt.data.origin === false) {
+            o = "开启";
+            c = "success";
+          } else {
+            o = "关闭";
+            c = "red accent-a";
           }
           this.snackbar.text = `管理员${evt.data.operator.memberName}${o}了坦白说`;
           this.snackbar.color = c;
@@ -548,7 +551,18 @@ export default {
           if (evt.data.member.group.id != this.$route.params.id) return;
           if (evt.data.member.id != this.qq) return;
           this.snackbar.text = `你的群名片已从${evt.data.origin}更改为${evt.data.current}`;
-          this.snackbar.color = 'primary';
+          this.snackbar.color = "primary";
+          this.snackbar.status = true;
+          break;
+        }
+
+        // 群头衔改动（好像不能用
+        case "MemberSpecialTitleChangeEvent": {
+          console.log('changge')
+          if (evt.data.member.group.id != this.$route.params.id) return;
+          if (evt.data.member.id != this.qq) return;
+          this.snackbar.text = `你的专属头衔已从${evt.data.origin}更改为${evt.data.current}`;
+          this.snackbar.color = "primary";
           this.snackbar.status = true;
           break;
         }
