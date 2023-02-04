@@ -2,7 +2,7 @@
   <div>
     <v-navigation-drawer v-model="$store.state.drawer" app width="300">
       <!--最左侧菜单 -->
-      <v-navigation-drawer v-model="$store.state.drawer" absolute mini-variant>
+      <v-navigation-drawer v-model="$store.state.drawer" absolute mini-variant hide-overlay>
         <v-avatar class="d-block text-center mx-auto mt-4" color="grey darken-1" size="36">
           <v-img :src="'https://q1.qlogo.cn/g?b=qq&nk='+$store.state.sessionInfo.qq.id+'&s=160'" />
         </v-avatar>
