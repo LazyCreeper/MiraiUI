@@ -558,12 +558,42 @@ export default {
 
         // 群头衔改动（好像不能用
         case "MemberSpecialTitleChangeEvent": {
-          console.log('changge')
           if (evt.data.member.group.id != this.$route.params.id) return;
           if (evt.data.member.id != this.qq) return;
           this.snackbar.text = `你的专属头衔已从${evt.data.origin}更改为${evt.data.current}`;
           this.snackbar.color = "primary";
           this.snackbar.status = true;
+          break;
+        }
+
+        // 群成员被禁言
+        case "MemberMuteEvent": {
+          if (evt.data.member.group.id != this.$route.params.id) return;
+          let obj = {
+            type: "GroupMessage",
+            sender: {
+              group: {
+                id: Number(this.$route.params.id)
+              },
+              id: 10000,
+              memberName: "系统消息",
+            },
+            messageChain: [
+              {
+                id: 0,
+                time: Date.now()
+                  .toString()
+                  .slice(0, 10),
+                type: "Source"
+              },
+              {
+                type: "Plain",
+                text: `${evt.data.member.memberName} 已被 ${evt.data.operator.memberName} 禁言 ${evt
+            .data.durationSeconds / 60} 分钟`
+              }
+            ]
+          };
+          this.msgList.push(obj);
           break;
         }
       }
