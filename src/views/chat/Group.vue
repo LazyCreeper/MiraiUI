@@ -597,6 +597,36 @@ export default {
           this.msgList.push(obj);
           break;
         }
+
+        // 群成员解除禁言
+        case "MemberUnmuteEvent": {
+          if (evt.data.member.group.id != this.$route.params.id) return;
+          let obj = {
+            type: "GroupMessage",
+            sender: {
+              group: {
+                id: Number(this.$route.params.id)
+              },
+              id: 10000,
+              memberName: "系统消息",
+            },
+            messageChain: [
+              {
+                id: 0,
+                time: Date.now()
+                  .toString()
+                  .slice(0, 10),
+                type: "Source"
+              },
+              {
+                type: "Plain",
+                text: `${evt.data.member.memberName} 已被 ${evt.data.operator.memberName} 解除禁言`
+              }
+            ]
+          };
+          this.msgList.push(obj);
+          break;
+        }
       }
     },
 
