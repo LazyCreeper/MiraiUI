@@ -11,6 +11,8 @@ module.exports = defineConfig({
   },
   devServer: {
     port: 1203,
+    // disableHostCheck: true,
+    allowedHosts: 'all',
   },
   pwa: {
     iconPaths: {
