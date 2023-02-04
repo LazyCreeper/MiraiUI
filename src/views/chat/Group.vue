@@ -524,9 +524,10 @@ export default {
             type: "GroupMessage",
             sender: {
               group: {
-                id: this.$route.params.id
+                id: Number(this.$route.params.id)
               },
-              id: 10000
+              id: 10000,
+              memberName: "系统消息",
             },
             messageChain: [
               {
