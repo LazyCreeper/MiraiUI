@@ -527,7 +527,7 @@ export default {
                 id: Number(this.$route.params.id)
               },
               id: 10000,
-              memberName: "系统消息",
+              memberName: "系统消息"
             },
             messageChain: [
               {
@@ -577,7 +577,7 @@ export default {
                 id: Number(this.$route.params.id)
               },
               id: 10000,
-              memberName: "系统消息",
+              memberName: "系统消息"
             },
             messageChain: [
               {
@@ -589,8 +589,9 @@ export default {
               },
               {
                 type: "Plain",
-                text: `${evt.data.member.memberName} 已被 ${evt.data.operator.memberName} 禁言 ${evt
-            .data.durationSeconds / 60} 分钟`
+                text: `${evt.data.member.memberName} 已被 ${
+                  evt.data.operator.memberName
+                } 禁言 ${evt.data.durationSeconds / 60} 分钟`
               }
             ]
           };
@@ -608,7 +609,7 @@ export default {
                 id: Number(this.$route.params.id)
               },
               id: 10000,
-              memberName: "系统消息",
+              memberName: "系统消息"
             },
             messageChain: [
               {
@@ -855,6 +856,38 @@ export default {
       this.snackbar.text = "保存成功";
       this.snackbar.color = "success";
       this.snackbar.status = true;
+    },
+
+    // 询问是否允许通知（鸡肋功能，先放在这吃灰）
+    checkNotifyPermit() {
+      // 如果是禁止的
+      if (Notification.permission === "denied") {
+        localStorage.setItem("allowAtNotify", false);
+        this.snackbar.text = "浏览器已禁止，请在浏览器开启";
+        this.snackbar.color = "red accent-2";
+        this.snackbar.status = true;
+        return;
+      }
+
+      // 如果已经开启
+      if (Notification.permission === "granted") {
+        localStorage.setItem("allowAtNotify", true);
+        this.snackbar.text = "浏览器通知已开启";
+        this.snackbar.color = "success";
+        this.snackbar.status = true;
+        return;
+      }
+
+      Notification.requestPermission(function(permission) {
+        // 如果同意，那就是同意了
+        if (permission === "granted") {
+          localStorage.setItem("allowAtNotify", true);
+
+          this.snackbar.text = "开启成功";
+          this.snackbar.color = "success";
+          this.snackbar.status = true;
+        }
+      });
     }
   }
 };
