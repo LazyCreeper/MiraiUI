@@ -10,7 +10,7 @@
     </v-system-bar>
     <v-app-bar app dark clipped-right flat height="60">
       <v-app-bar-nav-icon @click="drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>{{ ($store.state.chat.name) ? $store.state.chat.name : "WebQQ" }} {{ ($store.state.chat.remark) ? " (" + $store.state.chat.remark + ")" : "" }} {{ ($route.params.id) ? " 『" + $route.params.id + "』" : "" }}</v-toolbar-title>
+      <v-toolbar-title>{{ ($store.state.chat.name) ? $store.state.chat.name : "Mirai" }} {{ ($store.state.chat.remark) ? " (" + $store.state.chat.remark + ")" : "" }} {{ ($route.params.id) ? " 『" + $route.params.id + "』" : "" }}</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-app-bar>
 
@@ -48,8 +48,6 @@ export default {
       this.$store.commit("isLogin", true);
       getSessionInfo();
     }
-
-    // this.launchWs();
   },
 
   mounted() {
@@ -63,23 +61,6 @@ export default {
   methods: {
     drawer() {
       this.$store.commit("drawer", !this.$store.state.drawer);
-    },
-    launchWs() {
-      var ws = new WebSocket(
-        "ws://" +
-          localStorage.addr.split("//")[1] +
-          "/all?verifyKey=" +
-          localStorage.verifyKey +
-          "&qq=" +
-          localStorage.qq +
-          "&sessionKey=" +
-          localStorage.sessionKey
-      );
-      ws.onmessage = function() {
-        // var received_msg = evt.data;
-        // var msg = JSON.parse(received_msg);
-        // console.log(msg)
-      };
     }
   }
 };
