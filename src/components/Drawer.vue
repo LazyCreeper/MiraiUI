@@ -43,8 +43,8 @@
         </v-btn>
       </v-navigation-drawer>
 
-      <v-sheet color="grey lighten-5" width="100%">
-        <v-img src="https://cdn.imlazy.ink:233/img/background/72731287_p0.png" max-height="100">
+      <v-sheet color="grey darken-2" width="100%">
+        <v-img src="https://api.imlazy.ink/img/" max-height="100">
           <template v-slot:default>
             <v-row
               class="fill-height ma-0"
@@ -60,15 +60,39 @@
 
       <!-- 消息列表 -->
       <v-list class="pl-14" shaped v-if="this.$store.state.router === 'main'">
-        <v-list-item v-for="n in 5" :key="n" link>
+        <v-list-item>
           <v-list-item-content>
-            <v-list-item-title>会话 {{ n }}</v-list-item-title>
+            <v-list-item-title>会话列表</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title>这个功能没做</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title>因为我群少</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title>其次我不会</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title>！你说你会？</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title>去Github提交Pr~</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
 
       <!-- 联系人 -->
-
       <v-list
         class="pl-14"
         shaped
