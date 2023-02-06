@@ -51,7 +51,7 @@ import { getSessionInfo } from "@/service/tools";
 export default {
   data: () => ({
     valid: null,
-    addr: "http://127.0.0.1:2345",
+    addr: "",
     addrRules: [v => !!v || "请输入http-api地址"],
     qq: null,
     qqRules: [v => !!v || "请输入QQ号"],
