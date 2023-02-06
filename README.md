@@ -1,11 +1,8 @@
-# WebQQ
+# Mirai UI
 一个基于[Mirai-http-api](https://docs.mirai.mamoe.net/mirai-api-http/)的WebQQ
 
 ## 这有啥用
 能在网页操作QQ。少占用一个通道
-
-# WARNING | 警告
-项目还在开发，请耐心等待~
 
 ## 运行环境
 任意http服务器，无需php，mysql环境
@@ -37,17 +34,24 @@ adapterSettings:
 2. 从release页面下载编译好的压缩包，上传到任意网站服务器
 3. 访问网站，输入相关信息，点击验证即可
 
-#### 搭建开发环境
+#### 手动编译
 ```bash
 # 克隆仓库到本地
-git clone https://github.com/LazyCreeper/WebQQ
+git clone https://github.com/LazyCreeper/MiraiUI
 # 安装依赖
 npm i
-# 启动运行环境
-npm run serve
 # 编译
 npm run build
 ```
+
+## 目前已经实现的功能
+1. 和好友、群聊天
+2. 发送文字、图片、@
+3. 查看闪照、撤回的消息
+4. 额，反正够日常聊天就对了
+
+## BUG 列表
+1. 发送的消息的符号会反过来
 
 ## 安全性
 本项目开发之时并没考虑部署在公网，所以仅限http访问不支持ssl加密（说白了其实就是写死了，懒得加判断）。所以更推荐在本地上手动搭建http服务器运行。
@@ -60,5 +64,6 @@ npm run build
 
 ## 要饭
 ~~0.01也是爱~~
+
 ![QR CODE](https://qn-store-pub-tx.seewo.com/676b69a1b8ad4f9391555c127a2331c7165760252223383)
 
