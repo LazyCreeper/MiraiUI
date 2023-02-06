@@ -6,7 +6,7 @@ module.exports = defineConfig({
       entry: 'src/main.js',
       template: 'public/index.html',
       filename: 'index.html',
-      title: "WebQQ - Powered by Lazy"
+      title: "MiraiUI - Powered by Lazy"
     }
   },
   devServer: {
