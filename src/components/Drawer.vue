@@ -33,13 +33,13 @@
         </v-btn>
         <v-btn
           class="d-flex text-center mx-auto mb-5"
-          to="addFriend"
+          @click="logout.dialog = true"
           text
           fab
           small
           active-class="yellow--text"
         >
-          <v-icon dark>mdi-plus</v-icon>
+          <v-icon dark>mdi-logout-variant</v-icon>
         </v-btn>
       </v-navigation-drawer>
 
@@ -155,7 +155,11 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-pagination v-model="page" :length="Math.ceil(groupMemberList.length/perPage)" :total-visible="3"></v-pagination>
+        <v-pagination
+          v-model="page"
+          :length="Math.ceil(groupMemberList.length/perPage)"
+          :total-visible="3"
+        ></v-pagination>
 
         <v-list-item v-if="groupMemberList[groupMemberList.length-1].permission === 'OWNER'">
           <v-list-item-content>
@@ -180,7 +184,11 @@
         </v-list-item>
       </v-list>
 
-      <v-pagination v-model="page" :length="Math.ceil(groupMemberList.length/perPage)" :total-visible="3"></v-pagination>
+      <v-pagination
+        v-model="page"
+        :length="Math.ceil(groupMemberList.length/perPage)"
+        :total-visible="3"
+      ></v-pagination>
     </v-navigation-drawer>
 
     <!-- 好友信息 -->
@@ -223,6 +231,25 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
+
+    <!-- 登出确认对话框 -->
+    <v-dialog v-model="logout.dialog" max-width="400px">
+      <v-card>
+        <v-card-title class="red darken-1">
+          <span class="text-h5">警告</span>
+          <v-spacer></v-spacer>
+          <v-btn icon plain @click="logout.dialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="text-subtitle-1 mt-4">是否登出？</v-card-text>
+        <v-card-actions>
+          <v-btn elevation="2" @click="logout.dialog = false">取消</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn elevation="2" color="red" :loading="logout.btnLoading" @click="toLogout">确定</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -284,7 +311,11 @@ export default {
       sex: "UNKNOWN" // UNKNOWN, MALE, FEMALE
     },
     page: 1,
-    perPage: 14
+    perPage: 14,
+    logout: {
+      dialog: null,
+      btnLoading: null
+    }
   }),
 
   watch: {},
@@ -360,6 +391,25 @@ export default {
         }
         return 0;
       });
+    },
+
+    // 登出
+    async toLogout() {
+      this.logout.btnLoading = true;
+
+      // 释放 sessionKey
+      const { data: release } = await axios.post(localStorage.addr + "/release", {
+        sessionKey: localStorage.sessionKey,
+        qq: localStorage.qq
+      });
+      console.log(release)
+
+      // 清除本地数据
+      localStorage.clear()
+
+      // 刷新页面
+      this.logout.btnLoading = false;
+      window.location.reload()
     }
   }
 };
