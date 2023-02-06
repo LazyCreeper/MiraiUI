@@ -20,7 +20,6 @@
             outlined
           ></v-text-field>
 
-          <br />
           <v-btn
             :disabled="!valid"
             color="success"
@@ -30,7 +29,10 @@
           >验证</v-btn>
 
           <v-btn color="error" class="mr-4" @click="reset">重置</v-btn>
+
+          <span>Copyright © {{ new Date().getFullYear() }} <a href="https://lazy.ink" target="_blank">Lazy</a> all right reserved</span>
         </v-form>
+        
       </v-card-text>
     </v-card>
     <v-snackbar v-model="snackbar.status" :timeout="snackbar.timeout" top text>
