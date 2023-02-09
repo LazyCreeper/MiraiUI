@@ -86,6 +86,7 @@ export default {
       const { data: verify } = await axios.post(this.addr + "/verify", {
         verifyKey: this.password
       });
+
       //   如果认证失败
       if (verify.code != 0) {
         this.snackbar.text = verify.msg;
@@ -123,6 +124,7 @@ export default {
     },
     reset() {
       this.$refs.form.reset();
+      this.btnLoading = false;
     }
   }
 };
