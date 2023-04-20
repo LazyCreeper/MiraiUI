@@ -7,20 +7,20 @@
         <v-col cols="12" class="text-center">
           <a href="https://github.com/LazyCreeper/MiraiUI/" target="_blank">
             <img
-            alt="GitHub Repo stars"
-            src="https://img.shields.io/github/stars/LazyCreeper/miraiui?color=yellow&style=for-the-badge"
-          />
+              alt="GitHub Repo stars"
+              src="https://img.shields.io/github/stars/LazyCreeper/miraiui?color=yellow&style=for-the-badge"
+            />
           </a>
           <img
             alt="GitHub commit activity"
             src="https://img.shields.io/github/commit-activity/m/LazyCreeper/miraiui?style=for-the-badge"
             class="ml-2 mr-2"
           />
-          <a href="https://qn-store-pub-tx.seewo.com/676b69a1b8ad4f9391555c127a2331c7165760252223383" target="_blank">
+          <a href="https://cdn.imlazy.ink:233/img/20220924.jpg" target="_blank">
             <img
-            alt="Donate"
-            src="https://img.shields.io/badge/$-donate-ff69b4.svg?style=for-the-badge"
-          />
+              alt="Donate"
+              src="https://img.shields.io/badge/$-donate-ff69b4.svg?style=for-the-badge"
+            />
           </a>
         </v-col>
       </v-row>
@@ -43,9 +43,10 @@
             </v-list-item>
           </v-card>
         </v-col>
-        <v-col cols="12" class="text-center">
-          Copyright © {{ new Date().getFullYear() }} Lazy all right reserved
-        </v-col>
+        <v-col
+          cols="12"
+          class="text-center"
+        >Copyright © {{ new Date().getFullYear() }} Lazy all right reserved</v-col>
       </v-row>
     </v-container>
   </div>
