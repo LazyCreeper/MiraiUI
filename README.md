@@ -80,4 +80,4 @@ npm run build
 
 ~~0.01 也是爱~~
 
-![QR CODE](https://qn-store-pub-tx.seewo.com/676b69a1b8ad4f9391555c127a2331c7165760252223383)
+![QR CODE](https://cdn.imlazy.ink:233/img/20220924.jpg)
