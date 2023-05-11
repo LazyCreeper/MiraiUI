@@ -404,6 +404,7 @@ export default {
 
     onEvent(raw) {
       var evt = JSON.parse(raw.data);
+      // console.log(evt.data);
       // 判断事件类型
       switch (evt.data.type) {
         // 身份变更
@@ -653,6 +654,11 @@ export default {
           }
           case "At":
             合并の.push("@" + msg[i].target + " ");
+            if (msg[i].target === +localStorage.qq) {
+              this.snackbar.text = `有人@你`;
+              this.snackbar.color = "red accent-2";
+              this.snackbar.status = true;
+            }
             break;
           case "AtAll":
             合并の.push("@全体成员 ");
