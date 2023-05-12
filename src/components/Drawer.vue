@@ -1,8 +1,13 @@
 <template>
   <div>
-    <v-navigation-drawer v-model="$store.state.drawer" app width="300">
+    <v-navigation-drawer
+      v-model="$store.state.drawer"
+      app
+      width="300"
+      :disable-route-watcher="true"
+    >
       <!--最左侧菜单 -->
-      <v-navigation-drawer v-model="$store.state.drawer" absolute mini-variant hide-overlay>
+      <div class="left-drawer">
         <v-avatar class="d-block text-center mx-auto mt-4" color="grey darken-1" size="36">
           <v-img :src="'https://q1.qlogo.cn/g?b=qq&nk='+$store.state.sessionInfo.qq.id+'&s=160'" />
         </v-avatar>
@@ -41,10 +46,11 @@
         >
           <v-icon dark>mdi-logout-variant</v-icon>
         </v-btn>
-      </v-navigation-drawer>
+      </div>
 
-      <v-sheet color="grey darken-2" width="100%">
-        <v-img src="https://api.imlazy.ink/img/" max-height="100">
+      <v-sheet color="grey darken-2" width="100%" hide-overla>
+        <v-img src="https://cdn.imlazy.ink:233/img/background/77230166_p0.jpg" max-height="100">
+          <!-- <v-img src="https://api.imlazy.ink/img/" max-height="100"> -->
           <template v-slot:default>
             <v-row
               class="fill-height ma-0"
@@ -398,19 +404,33 @@ export default {
       this.logout.btnLoading = true;
 
       // 释放 sessionKey
-      const { data: release } = await axios.post(localStorage.addr + "/release", {
-        sessionKey: localStorage.sessionKey,
-        qq: localStorage.qq
-      });
-      console.log(release)
+      const { data: release } = await axios.post(
+        localStorage.addr + "/release",
+        {
+          sessionKey: localStorage.sessionKey,
+          qq: localStorage.qq
+        }
+      );
+      console.log(release);
 
       // 清除本地数据
-      localStorage.clear()
+      localStorage.clear();
 
       // 刷新页面
       this.logout.btnLoading = false;
-      window.location.reload()
+      window.location.reload();
     }
   }
 };
 </script>
+
+<style scoped>
+.left-drawer {
+  position: absolute;
+  padding: 3px 7px;
+  height: 100%;
+  border-right: 1px solid #585858;
+  z-index: 1;
+  background: #363636;
+}
+</style>
