@@ -404,14 +404,17 @@ export default {
       this.logout.btnLoading = true;
 
       // 释放 sessionKey
-      const { data: release } = await axios.post(
-        localStorage.addr + "/release",
-        {
+      axios
+        .post(localStorage.addr + "/release", {
           sessionKey: localStorage.sessionKey,
           qq: localStorage.qq
-        }
-      );
-      console.log(release);
+        })
+        .then(res => {
+          console.log(res.data);
+        })
+        .catch(err => {
+          console.error(err.message);
+        });
 
       // 清除本地数据
       localStorage.clear();
