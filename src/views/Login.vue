@@ -30,9 +30,14 @@
 
           <v-btn color="error" class="mr-4" @click="reset">重置</v-btn>
 
-          <span>Copyright © {{ new Date().getFullYear() }} <a href="https://lazy.ink" target="_blank">Lazy</a> all right reserved</span>
+          <span>
+            Copyright © {{ new Date().getFullYear() }}
+            <a
+              href="https://lazy.ink"
+              target="_blank"
+            >Lazy</a> all right reserved
+          </span>
         </v-form>
-        
       </v-card-text>
     </v-card>
     <v-snackbar v-model="snackbar.status" :timeout="snackbar.timeout" top text>
@@ -68,7 +73,7 @@ export default {
 
   created() {
     if (localStorage.getItem("sessionKey")) {
-      window.location.href = "/main"
+      window.location.href = "/main";
     }
   },
 
@@ -82,7 +87,19 @@ export default {
       }
       this.btnLoading = true;
 
-      //   认证
+      // 先试下认证地址6不6
+      try {
+        await axios.post(this.addr + "/verify", {
+          verifyKey: this.password
+        });
+      } catch (err) {
+        this.snackbar.text = err.message;
+        this.snackbar.status = true;
+        this.btnLoading = false;
+        return;
+      }
+
+      //  6的，那就再来一次认证
       const { data: verify } = await axios.post(this.addr + "/verify", {
         verifyKey: this.password
       });
@@ -96,10 +113,10 @@ export default {
       }
 
       // 即使有Vuex但我还是要把重要信息丢你浏览器
-      localStorage.setItem("addr",this.addr)
-      localStorage.setItem("sessionKey",verify.session)
-      localStorage.setItem("verifyKey",this.password)
-      localStorage.setItem("qq",this.qq)
+      localStorage.setItem("addr", this.addr);
+      localStorage.setItem("sessionKey", verify.session);
+      localStorage.setItem("verifyKey", this.password);
+      localStorage.setItem("qq", this.qq);
 
       //   绑定
       const { data: bind } = await axios.post(this.addr + "/bind", {
@@ -116,11 +133,11 @@ export default {
       this.btnLoading = false;
 
       // 绑定成功，获取会话信息
-      await getSessionInfo()
+      await getSessionInfo();
 
       this.$store.commit("isLogin", true);
       // window.location.href = "/#/main"
-      this.$router.push('main')
+      this.$router.push("main");
     },
     reset() {
       this.$refs.form.reset();
