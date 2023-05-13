@@ -50,7 +50,10 @@ export default {
       location.reload();
     },
     reset() {
-      localStorage.clear();
+      localStorage.removeItem("addr");
+      localStorage.removeItem("qq");
+      localStorage.removeItem("sessionKey");
+      localStorage.removeItem("verifyKey");
       this.$router.push("login");
     }
   }

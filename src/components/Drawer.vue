@@ -417,7 +417,10 @@ export default {
         });
 
       // 清除本地数据
-      localStorage.clear();
+      localStorage.removeItem("addr");
+      localStorage.removeItem("qq");
+      localStorage.removeItem("sessionKey");
+      localStorage.removeItem("verifyKey");
 
       // 刷新页面
       this.logout.btnLoading = false;
