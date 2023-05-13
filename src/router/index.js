@@ -34,6 +34,11 @@ const routes = [
     name: "chatWithGroup",
     component: () => import("../views/chat/Group.vue"),
   },
+  {
+    path: "/Error",
+    name: "Error",
+    component: () => import("../views/Error.vue"),
+  },
 ];
 
 const router = new VueRouter({

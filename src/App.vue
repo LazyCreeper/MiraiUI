@@ -14,10 +14,13 @@
       <v-spacer></v-spacer>
     </v-app-bar>
 
-    <Drawer v-if="$store.state.isLogin"/>
+    <Drawer v-if="$store.state.isLogin" />
 
     <v-main>
       <v-container>
+        <v-overlay :value="!$store.state.isLogin">
+          <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
         <router-view />
       </v-container>
     </v-main>
@@ -44,9 +47,26 @@ export default {
       this.$router.push("login");
       return;
     } else {
-      console.log("logOK")
-      this.$store.commit("isLogin", true);
-      getSessionInfo();
+      getSessionInfo().then(res => {
+        if (!res) {
+          this.$store.commit("error", {
+            msg: "无法访问 mirai-http-api 地址，请检查你的网络连接"
+          });
+          this.$router.push("Error");
+        } else if (res.code != 0) {
+          // SessionKey 无效
+          this.$store.commit("error", {
+            msg: res.msg
+          });
+          this.$router.push("Error");
+        } else {
+          this.$store.commit("error", {
+            msg: null
+          });
+          console.log(res.msg);
+          this.$store.commit("isLogin", true);
+        }
+      });
     }
   },
 

@@ -28,6 +28,9 @@ export default new Vuex.Store({
     chat: {
       id: null,
       name: null,
+    },
+    error: {
+      msg: null
     }
   },
   getters: {},
@@ -59,6 +62,9 @@ export default new Vuex.Store({
     chat(state, data) {
       state.chat = data
     },
+    error(state, data) {
+      state.error = data
+    }
   },
   actions: {},
   modules: {},

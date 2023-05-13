@@ -6,8 +6,23 @@ export async function getSessionInfo() {
         const { data: info } = await axios.get(
             localStorage.addr + "/sessionInfo?sessionKey=" + localStorage.sessionKey
         );
-        store.commit("sessionInfo", info.data);
+        console.log(info);
+        //   如果认证失败
+        if (info.code != 0) {
+            return {
+                code: 3,
+                msg: info.msg
+            };
+        } else {
+            store.commit("sessionInfo", info.data);
+            return {
+                code: 0,
+                msg: '认证成功'
+            };
+        }
     } catch (err) {
-        throw new Error(err);
+        console.log(err.message);
+        return false
+        // throw new Error(err);
     }
 }
