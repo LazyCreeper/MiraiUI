@@ -327,6 +327,10 @@ export default {
     if (localStorage.maxMsgLog) this.maxMsgLog = Number(localStorage.maxMsgLog);
   },
 
+  mounted() {
+    this.loadLocalChatRecords();
+  },
+
   destroyed() {
     // 关闭窗口时销毁相关信息
     const obj = {
@@ -339,8 +343,11 @@ export default {
 
   watch: {
     "$route.params.id": function() {
-      // 窗口聊天对象改变时，清空聊天记录
+      // 窗口聊天对象改变时，清空原有的聊天记录
       this.msgList = [];
+
+      // 然后再读取新的
+      this.loadLocalChatRecords();
     },
     "msgList.length": function(val) {
       // 有新消息时，自动滚到最底
@@ -352,6 +359,13 @@ export default {
 
       // 窗口内有超过一组消息时，删除第一条消息
       if (val > this.maxMsgLog) this.msgList.shift();
+    },
+    msgList: function() {
+      // 将保存数据到浏览器
+      localStorage.setItem(
+        "group" + this.$route.params.id,
+        JSON.stringify(this.msgList)
+      );
     }
   },
 
@@ -894,6 +908,14 @@ export default {
           this.snackbar.status = true;
         }
       });
+    },
+
+    // 读取本地聊天记录
+    loadLocalChatRecords() {
+      if (!localStorage.getItem("group" + this.$route.params.id)) return;
+      this.msgList = JSON.parse(
+        localStorage.getItem("group" + this.$route.params.id)
+      );
     }
   }
 };
