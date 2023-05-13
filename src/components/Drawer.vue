@@ -49,8 +49,7 @@
       </div>
 
       <v-sheet color="grey darken-2" width="100%" hide-overla>
-        <v-img src="https://cdn.imlazy.ink:233/img/background/77230166_p0.jpg" max-height="100">
-          <!-- <v-img src="https://api.imlazy.ink/img/" max-height="100"> -->
+        <v-img src="https://api.imlazy.ink/img/" max-height="100">
           <template v-slot:default>
             <v-row
               class="fill-height ma-0"
