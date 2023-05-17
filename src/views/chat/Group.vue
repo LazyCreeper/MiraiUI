@@ -284,7 +284,7 @@ export default {
     dialog: null,
     tab: null,
     socket: null,
-    socketForMsg: null,
+    socketForEvt: null,
     msgList: [],
     sMsg: null,
     sAt: {
@@ -376,8 +376,8 @@ export default {
       this.socket = true;
       this.socket = ws("message")
 
-      this.socketForMsg = true;
-      this.socketForMsg = ws('event')
+      this.socketForEvt = true;
+      this.socketForEvt = ws('event')
       // 监听 socket 连接
       this.socket.onopen = this.wsOpen;
 
@@ -388,7 +388,7 @@ export default {
       this.socket.onmessage = this.onMsg;
 
       // 监听事件
-      this.socketForMsg.onmessage = this.onEvent;
+      this.socketForEvt.onmessage = this.onEvent;
     },
 
     wsOpen() {
