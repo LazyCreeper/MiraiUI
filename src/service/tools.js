@@ -26,3 +26,8 @@ export async function getSessionInfo() {
         // throw new Error(err);
     }
 }
+
+// 自己用又不是别人用，不用怕乱传参数
+export function ws(type = 'all') {
+    return new WebSocket(`ws://${localStorage.addr.split("//")[1]}/${type}?verifyKey=${localStorage.verifyKey}&qq=${localStorage.qq}&sessionKey=${localStorage.sessionKey}`)
+}

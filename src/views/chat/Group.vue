@@ -275,6 +275,7 @@
 
 <script>
 import axios from "axios";
+import { ws } from "@/service/tools";
 import xmlConvert from "xml-js";
 export default {
   name: "ChatWithGroup",
@@ -373,28 +374,10 @@ export default {
     // 启动 WebSocket 连接，用于接收消息
     launchWs() {
       this.socket = true;
-      this.socket = new WebSocket(
-        "ws://" +
-          localStorage.addr.split("//")[1] +
-          "/message?verifyKey=" +
-          localStorage.verifyKey +
-          "&qq=" +
-          localStorage.qq +
-          "&sessionKey=" +
-          localStorage.sessionKey
-      );
+      this.socket = ws("message")
 
       this.socketForMsg = true;
-      this.socketForMsg = new WebSocket(
-        "ws://" +
-          localStorage.addr.split("//")[1] +
-          "/event?verifyKey=" +
-          localStorage.verifyKey +
-          "&qq=" +
-          localStorage.qq +
-          "&sessionKey=" +
-          localStorage.sessionKey
-      );
+      this.socketForMsg = ws('event')
       // 监听 socket 连接
       this.socket.onopen = this.wsOpen;
 
