@@ -3,6 +3,8 @@
     <v-menu v-model="rMenu.open" :position-x="rMenu.x" :position-y="rMenu.y">
       <v-list>
         <v-list-item @click="rm_toChat(tSender)">发送消息</v-list-item>
+        <v-divider></v-divider>
+        <v-list-item @click="vInfo.dialog = true">查看资料</v-list-item>
         <v-list-item @click="rm_At(tSender)">@ TA</v-list-item>
         <!-- 添加其他菜单项 -->
       </v-list>
@@ -228,6 +230,35 @@
       </v-card>
     </v-dialog>
 
+    <!-- 查看资料 -->
+    <v-dialog v-model="vInfo.dialog" max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">{{ tSender.memberName }}</span>
+          <v-spacer></v-spacer>
+          <v-btn icon plain @click="vInfo.dialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-list-item three-line>
+            <v-list-item-content>
+              <v-list-item-title>QQ号：{{ tSender.id }}</v-list-item-title>
+              <v-list-item-title v-if="tSender.specialTitle !== ''">群头衔：{{ tSender.specialTitle }}</v-list-item-title>
+              <v-list-item-title>入群时间：{{ new Date(tSender.joinTimestamp * 1000).toLocaleString() }}</v-list-item-title>
+              <v-list-item-title>上次发言：{{ new Date(tSender.lastSpeakTimestamp * 1000).toLocaleString() }}</v-list-item-title>
+              <!-- 这个貌似没用，一直显示0 -->
+              <v-list-item-title v-if="tSender.muteTimeRemaining !== 0">禁言剩余：{{ tSender.muteTimeRemaining }}分钟</v-list-item-title>
+            </v-list-item-content>
+
+            <v-list-item-avatar size="100" color="grey">
+              <v-img :src="'https://q1.qlogo.cn/g?b=qq&nk='+tSender.id+'&s=160'"></v-img>
+            </v-list-item-avatar>
+          </v-list-item>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <!-- 聊天框设置 -->
     <!-- 这里UI难看，但是能用 -->
     <v-dialog v-model="msgDialog" max-width="600px">
@@ -333,7 +364,10 @@ export default {
       x: 0,
       y: 0
     },
-    tSender: {}
+    tSender: {},
+    vInfo: {
+      dialog: false
+    }
   }),
 
   created() {
@@ -739,6 +773,9 @@ export default {
             let 哎 = `[转发的聊天记录] <small>（出于性能原因暂不支持浏览，请在浏览器控制台查看）</small>`;
             合并の.push(哎);
             console.log(msg[i].nodeList);
+            break;
+          }
+          default: {
             break;
           }
         }
