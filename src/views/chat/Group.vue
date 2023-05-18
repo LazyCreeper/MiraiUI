@@ -1,5 +1,12 @@
 <template>
   <div>
+    <v-menu v-model="rMenu.open" :position-x="rMenu.x" :position-y="rMenu.y">
+      <v-list>
+        <v-list-item @click="rm_toChat(tSender)">发送消息</v-list-item>
+        <v-list-item @click="rm_At(tSender)">@ TA</v-list-item>
+        <!-- 添加其他菜单项 -->
+      </v-list>
+    </v-menu>
     <div id="chatArea">
       <v-list-item
         three-line
@@ -10,6 +17,7 @@
       >
         <v-list-item-avatar>
           <v-img
+            @contextmenu.prevent="handleContextMenu(mList.sender,$event)"
             :src="(Number($route.params.id) === mList.sender.group.id) ? 'https://q1.qlogo.cn/g?b=qq&nk='+mList.sender.id+'&s=160' : 'https://q1.qlogo.cn/g?b=qq&nk='+qq+'&s=160' "
           />
         </v-list-item-avatar>
@@ -319,7 +327,13 @@ export default {
       status: false,
       text: null,
       timeout: 2000
-    }
+    },
+    rMenu: {
+      open: false,
+      x: 0,
+      y:0,
+    },
+    tSender: {}
   }),
 
   created() {
@@ -374,10 +388,10 @@ export default {
     // 启动 WebSocket 连接，用于接收消息
     launchWs() {
       this.socket = true;
-      this.socket = ws("message")
+      this.socket = ws("message");
 
       this.socketForEvt = true;
-      this.socketForEvt = ws('event')
+      this.socketForEvt = ws("event");
       // 监听 socket 连接
       this.socket.onopen = this.wsOpen;
 
@@ -899,7 +913,39 @@ export default {
       this.msgList = JSON.parse(
         localStorage.getItem("group" + this.$route.params.id)
       );
-    }
+    },
+
+    handleContextMenu(sender,$event) {
+      this.rMenu = {
+        open: true,
+        x: $event.clientX,
+        y: $event.clientY
+      }
+      this.tSender = sender
+    },
+
+    /**
+     * 右键菜单部分
+     */
+    // @对方
+    rm_At(sender){
+      const chain = {
+        type: "At",
+        target: sender.id
+      };
+      this.sendMsgg(chain);
+    },
+
+    // 进入私聊，仅限好友。（然后懒得写获取好友信息了，至少能聊）
+    rm_toChat(sender) {
+      const obj = {
+        id: sender.id,
+        name: sender.membername,
+        remark: ''
+      };
+      this.$store.commit("chat", obj);
+      this.$router.push("/chat/friend/"+sender.id)
+    },
   }
 };
 </script>
