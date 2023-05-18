@@ -915,6 +915,10 @@ export default {
       );
     },
 
+    /**
+     * 右键菜单部分
+     * 屎山+1好耶！
+     */
     handleContextMenu(sender,$event) {
       this.rMenu = {
         open: true,
@@ -924,9 +928,6 @@ export default {
       this.tSender = sender
     },
 
-    /**
-     * 右键菜单部分
-     */
     // @对方
     rm_At(sender){
       const chain = {
