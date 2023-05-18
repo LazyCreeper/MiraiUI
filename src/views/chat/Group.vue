@@ -331,7 +331,7 @@ export default {
     rMenu: {
       open: false,
       x: 0,
-      y:0,
+      y: 0
     },
     tSender: {}
   }),
@@ -919,17 +919,17 @@ export default {
      * 右键菜单部分
      * 屎山+1好耶！
      */
-    handleContextMenu(sender,$event) {
+    handleContextMenu(sender, $event) {
       this.rMenu = {
         open: true,
         x: $event.clientX,
         y: $event.clientY
-      }
-      this.tSender = sender
+      };
+      this.tSender = sender;
     },
 
     // @对方
-    rm_At(sender){
+    rm_At(sender) {
       const chain = {
         type: "At",
         target: sender.id
@@ -942,11 +942,11 @@ export default {
       const obj = {
         id: sender.id,
         name: sender.membername,
-        remark: ''
+        remark: ""
       };
       this.$store.commit("chat", obj);
-      this.$router.push("/chat/friend/"+sender.id)
-    },
+      this.$router.push("/chat/friend/" + sender.id);
+    }
   }
 };
 </script>
