@@ -101,7 +101,7 @@
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                  @click="setMute.dialog = true;setMute.target = Number($route.params.id);setMute.memberId = 0"
+                  @click="setMute.dialog = true;setMute.target = Number($route.params.id);setMute.memberId = 0;setMute.memberName = null"
                 >
                   <v-icon v-bind="attrs" v-on="on">mdi-message-bulleted-off</v-icon>
                 </v-btn>
@@ -463,7 +463,7 @@ export default {
       ],
       target: "",
       memberId: "",
-      time: 0
+      time: 1
     }
   }),
 
@@ -1122,9 +1122,10 @@ export default {
         }
       );
 
+      console.log(res.data.code)
       // 万一发不出去呢
       if (res.data.code != 0) {
-        this.snakebar = {
+        this.snackbar = {
           text: res.data.msg,
           color: "red accent-2",
           status: true
@@ -1158,7 +1159,7 @@ export default {
 
       if (this.setMute.name.type === "mute") {
         obj.messageChain[1].text = this.snackbar.text = `${
-          this.tSender.memberName
+          !this.tSender.memberName ? this.setMute.memberId : this.tSender.memberName
         }已被你禁言 ${this.setMute.time < 60 ? 1 : this.setMute.time / 60} 分钟`;
       } else {
         obj.messageChain[1].text = this.snackbar.text = "你开启了全员禁言";
@@ -1169,6 +1170,7 @@ export default {
       this.setMute.btnLoading = false;
       this.setMute.dialog = false;
       this.setMute.target = "";
+      this.setMute.memberName = null;
     },
 
     // 解除禁言
@@ -1186,7 +1188,7 @@ export default {
 
       // 万一发不出去呢
       if (res.data.code != 0) {
-        this.snakebar = {
+        this.snackbar = {
           text: res.data.msg,
           color: "red accent-2",
           status: true
@@ -1220,7 +1222,7 @@ export default {
 
       if (this.setMute.name.type === "mute") {
         obj.messageChain[1].text = this.snackbar.text = `${
-          this.tSender.memberName
+          !this.tSender.memberName ? this.setMute.memberId : this.tSender.memberName
         }已被你解除禁言`;
       } else {
         obj.messageChain[1].text = this.snackbar.text = "你关闭了全员禁言";
@@ -1231,6 +1233,7 @@ export default {
       this.setMute.btnLoading = false;
       this.setMute.dialog = false;
       this.setMute.target = "";
+      this.setMute.memberName = null;
     }
   }
 };
