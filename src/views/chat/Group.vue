@@ -578,6 +578,7 @@ export default {
 
         // 全员禁言
         case "GroupMuteAllEvent": {
+          if (!evt.data.operator) return;
           if (evt.data.group.id != this.$route.params.id) return;
           let o = null,
             c = null;
@@ -588,6 +589,30 @@ export default {
             o = "关闭";
             c = "success";
           }
+          let obj = {
+            type: "GroupMessage",
+            sender: {
+              group: {
+                id: Number(this.$route.params.id)
+              },
+              id: 10000,
+              memberName: "系统消息"
+            },
+            messageChain: [
+              {
+                id: 0,
+                time: Date.now()
+                  .toString()
+                  .slice(0, 10),
+                type: "Source"
+              },
+              {
+                type: "Plain",
+                text: `管理员${evt.data.operator.memberName}${o}了全员禁言`
+              }
+            ]
+          };
+          this.msgList.push(obj);
           this.snackbar.text = `管理员${evt.data.operator.memberName}${o}了全员禁言`;
           this.snackbar.color = c;
           this.snackbar.status = true;
