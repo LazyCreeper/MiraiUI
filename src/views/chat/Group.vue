@@ -6,6 +6,9 @@
         <v-divider></v-divider>
         <v-list-item @click="vInfo.dialog = true">查看资料</v-list-item>
         <v-list-item @click="rm_At(tSender)">@ TA</v-list-item>
+        <v-list-item
+          @click="setMute.dialog = true;setMute.target = tSender.group.id;setMute.memberId = tSender.id"
+        >设置禁言</v-list-item>
         <!-- 添加其他菜单项 -->
       </v-list>
     </v-menu>
@@ -93,6 +96,15 @@
                 </v-btn>
               </template>
               <span>At</span>
+            </v-tooltip>
+
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn @click="setMute.dialog = true;setMute.target = Number($route.params.id);setMute.memberId = 0">
+                  <v-icon v-bind="attrs" v-on="on">mdi-message-bulleted-off</v-icon>
+                </v-btn>
+              </template>
+              <span>设置禁言</span>
             </v-tooltip>
 
             <v-tooltip top>
@@ -248,13 +260,56 @@
               <v-list-item-title>入群时间：{{ new Date(tSender.joinTimestamp * 1000).toLocaleString() }}</v-list-item-title>
               <v-list-item-title>上次发言：{{ new Date(tSender.lastSpeakTimestamp * 1000).toLocaleString() }}</v-list-item-title>
               <!-- 这个貌似没用，一直显示0 -->
-              <v-list-item-title v-if="tSender.muteTimeRemaining !== 0">禁言剩余：{{ tSender.muteTimeRemaining }}分钟</v-list-item-title>
+              <v-list-item-title
+                v-if="tSender.muteTimeRemaining !== 0"
+              >禁言剩余：{{ tSender.muteTimeRemaining }}分钟</v-list-item-title>
             </v-list-item-content>
 
             <v-list-item-avatar size="100" color="grey">
               <v-img :src="'https://q1.qlogo.cn/g?b=qq&nk='+tSender.id+'&s=160'"></v-img>
             </v-list-item-avatar>
           </v-list-item>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <!-- 设置禁言 -->
+    <v-dialog v-model="setMute.dialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">禁言设置</span>
+          <v-spacer></v-spacer>
+          <v-btn icon plain @click="setMute.dialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-card-text>
+            <v-select
+              label="选择类型"
+              outlined
+              v-model="setMute.name"
+              :items="setMute.items"
+              item-text="name"
+              item-value="type"
+              return-object
+              class="pt-4"
+            ></v-select>
+            <v-text-field
+              v-if="setMute.name.type === 'mute'"
+              label="对方QQ号"
+              outlined
+              v-model="setMute.memberId"
+            ></v-text-field>
+            <v-text-field
+              v-if="setMute.name.type === 'mute'"
+              label="禁言时长（秒）"
+              outlined
+              v-model="setMute.time"
+              type="number"
+            ></v-text-field>
+            <v-btn elevation="2" block x-large :loading="setMute.btnLoading" @click="sMute">发送</v-btn>
+          </v-card-text>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -367,6 +422,18 @@ export default {
     tSender: {},
     vInfo: {
       dialog: false
+    },
+    setMute: {
+      dialog: false,
+      btnLoading: false,
+      name: { name: "谁？", type: "mute" },
+      items: [
+        { name: "谁？", type: "mute" },
+        { name: "所有人", type: "muteAll" }
+      ],
+      target: "",
+      memberId: "",
+      time: 0
     }
   }),
 
@@ -983,6 +1050,68 @@ export default {
       };
       this.$store.commit("chat", obj);
       this.$router.push("/chat/friend/" + sender.id);
+    },
+
+    // 设置禁言
+    async sMute() {
+      this.setMute.btnLoading = true;
+      const res = await axios.post(
+        localStorage.addr + "/" + this.setMute.name.type,
+        {
+          sessionKey: localStorage.sessionKey,
+          target: this.setMute.target,
+          memberId: this.setMute.memberId,
+          time: this.setMute.time
+        }
+      );
+
+      // 万一发不出去呢
+      if (res.data.code != 0) {
+        this.snakebar = {
+          text: res.data.msg,
+          color: "red accent-2",
+          status: true
+        };
+        this.setMute.btnLoading = false;
+        return;
+      }
+
+      let obj = {
+        type: "GroupMessage",
+        sender: {
+          group: {
+            id: Number(this.$route.params.id)
+          },
+          id: 10000,
+          memberName: "系统消息"
+        },
+        messageChain: [
+          {
+            id: 0,
+            time: Date.now()
+              .toString()
+              .slice(0, 10),
+            type: "Source"
+          },
+          {
+            type: "Plain"
+          }
+        ]
+      };
+
+      if (this.setMute.name.type === "mute") {
+        obj.messageChain[1].text = this.snackbar.text = `${
+          this.tSender.memberName
+        }已被你禁言 ${this.setMute.time / 60} 分钟`;
+      } else {
+        obj.messageChain[1].text = this.snackbar.text = "你开启了全员禁言";
+      }
+      this.snackbar.color = "blue accent-2";
+      this.snackbar.status = true;
+      this.msgList.push(obj);
+      this.setMute.btnLoading = false;
+      this.setMute.dialog = false;
+      this.setMute.target = "";
     }
   }
 };
