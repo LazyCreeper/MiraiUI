@@ -100,7 +100,9 @@
 
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn @click="setMute.dialog = true;setMute.target = Number($route.params.id);setMute.memberId = 0">
+                <v-btn
+                  @click="setMute.dialog = true;setMute.target = Number($route.params.id);setMute.memberId = 0"
+                >
                   <v-icon v-bind="attrs" v-on="on">mdi-message-bulleted-off</v-icon>
                 </v-btn>
               </template>
@@ -283,34 +285,61 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        <v-card-text>
-          <v-card-text>
-            <v-select
-              label="选择类型"
-              outlined
-              v-model="setMute.name"
-              :items="setMute.items"
-              item-text="name"
-              item-value="type"
-              return-object
-              class="pt-4"
-            ></v-select>
-            <v-text-field
-              v-if="setMute.name.type === 'mute'"
-              label="对方QQ号"
-              outlined
-              v-model="setMute.memberId"
-            ></v-text-field>
-            <v-text-field
-              v-if="setMute.name.type === 'mute'"
-              label="禁言时长（秒）"
-              outlined
-              v-model="setMute.time"
-              type="number"
-            ></v-text-field>
-            <v-btn elevation="2" block x-large :loading="setMute.btnLoading" @click="sMute">发送</v-btn>
-          </v-card-text>
-        </v-card-text>
+        <v-tabs v-model="setMute.tab" background-color="transparent" grow>
+          <v-tab>设置</v-tab>
+          <v-tab>解除</v-tab>
+        </v-tabs>
+        <v-tabs-items v-model="setMute.tab">
+          <v-tab-item>
+            <v-card-text>
+              <v-select
+                label="选择类型"
+                outlined
+                v-model="setMute.name"
+                :items="setMute.items"
+                item-text="name"
+                item-value="type"
+                return-object
+                class="pt-4"
+              ></v-select>
+              <v-text-field
+                v-if="setMute.name.type === 'mute'"
+                label="对方QQ号"
+                outlined
+                v-model="setMute.memberId"
+              ></v-text-field>
+              <v-text-field
+                v-if="setMute.name.type === 'mute'"
+                label="禁言时长（秒）"
+                outlined
+                v-model="setMute.time"
+                type="number"
+              ></v-text-field>
+              <v-btn elevation="2" block x-large :loading="setMute.btnLoading" @click="sMute">发送</v-btn>
+            </v-card-text>
+          </v-tab-item>
+          <v-tab-item>
+            <v-card-text>
+              <v-select
+                label="选择类型"
+                outlined
+                v-model="setMute.name"
+                :items="setMute.items"
+                item-text="name"
+                item-value="type"
+                return-object
+                class="pt-4"
+              ></v-select>
+              <v-text-field
+                v-if="setMute.name.type === 'mute'"
+                label="对方QQ号"
+                outlined
+                v-model="setMute.memberId"
+              ></v-text-field>
+              <v-btn elevation="2" block x-large :loading="setMute.btnLoading" @click="sUnMute">发送</v-btn>
+            </v-card-text>
+          </v-tab-item>
+        </v-tabs-items>
       </v-card>
     </v-dialog>
 
@@ -424,6 +453,7 @@ export default {
       dialog: false
     },
     setMute: {
+      tab: null,
       dialog: false,
       btnLoading: false,
       name: { name: "谁？", type: "mute" },
@@ -708,6 +738,7 @@ export default {
         // 群成员被禁言
         case "MemberMuteEvent": {
           if (evt.data.member.group.id != this.$route.params.id) return;
+          if(!evt.data.operator) return
           let obj = {
             type: "GroupMessage",
             sender: {
@@ -729,7 +760,7 @@ export default {
                 type: "Plain",
                 text: `${evt.data.member.memberName} 已被 ${
                   evt.data.operator.memberName
-                } 禁言 ${evt.data.durationSeconds / 60} 分钟`
+                } 禁言 ${evt.data.durationSeconds < 60 ? 1 : evt.data.durationSeconds / 60} 分钟`
               }
             ]
           };
@@ -740,6 +771,7 @@ export default {
         // 群成员解除禁言
         case "MemberUnmuteEvent": {
           if (evt.data.member.group.id != this.$route.params.id) return;
+          if(!evt.data.operator) return
           let obj = {
             type: "GroupMessage",
             sender: {
@@ -1127,9 +1159,71 @@ export default {
       if (this.setMute.name.type === "mute") {
         obj.messageChain[1].text = this.snackbar.text = `${
           this.tSender.memberName
-        }已被你禁言 ${this.setMute.time / 60} 分钟`;
+        }已被你禁言 ${this.setMute.time < 60 ? 1 : this.setMute.time / 60} 分钟`;
       } else {
         obj.messageChain[1].text = this.snackbar.text = "你开启了全员禁言";
+      }
+      this.snackbar.color = "blue accent-2";
+      this.snackbar.status = true;
+      this.msgList.push(obj);
+      this.setMute.btnLoading = false;
+      this.setMute.dialog = false;
+      this.setMute.target = "";
+    },
+
+    // 解除禁言
+    async sUnMute() {
+      this.setMute.btnLoading = true;
+      const res = await axios.post(
+        localStorage.addr + "/un" + this.setMute.name.type,
+        {
+          sessionKey: localStorage.sessionKey,
+          target: this.setMute.target,
+          memberId: this.setMute.memberId,
+          time: this.setMute.time
+        }
+      );
+
+      // 万一发不出去呢
+      if (res.data.code != 0) {
+        this.snakebar = {
+          text: res.data.msg,
+          color: "red accent-2",
+          status: true
+        };
+        this.setMute.btnLoading = false;
+        return;
+      }
+
+      let obj = {
+        type: "GroupMessage",
+        sender: {
+          group: {
+            id: Number(this.$route.params.id)
+          },
+          id: 10000,
+          memberName: "系统消息"
+        },
+        messageChain: [
+          {
+            id: 0,
+            time: Date.now()
+              .toString()
+              .slice(0, 10),
+            type: "Source"
+          },
+          {
+            type: "Plain"
+          }
+        ]
+      };
+
+      if (this.setMute.name.type === "mute") {
+        obj.messageChain[1].text = this.snackbar.text = `${
+          this.tSender.memberName
+        }已被你解除禁言`;
+      } else {
+        obj.messageChain[1].text = this.snackbar.text = "你关闭了全员禁言";
       }
       this.snackbar.color = "blue accent-2";
       this.snackbar.status = true;
