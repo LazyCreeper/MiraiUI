@@ -1,5 +1,13 @@
 <template>
   <div>
+    <v-menu v-model="rMenu.open" :position-x="rMenu.x" :position-y="rMenu.y">
+      <v-list>
+        <v-list-item
+          @click="sQuote.dialog = true;sQuote.msgId = tSender.msgId,sQuote.targetId = tSender.id"
+        >回复</v-list-item>
+        <!-- 添加其他菜单项 -->
+      </v-list>
+    </v-menu>
     <div id="chatArea">
       <v-list-item
         three-line
@@ -10,12 +18,13 @@
       >
         <v-list-item-avatar>
           <v-img
+            @contextmenu.prevent="handleContextMenu(mList.sender,mList.messageChain[0].id,$event)"
             :src="(Number($route.params.id) === mList.sender.id) ? 'https://q1.qlogo.cn/g?b=qq&nk='+$route.params.id+'&s=160' : 'https://q1.qlogo.cn/g?b=qq&nk='+mList.sender.id+'&s=160' "
           />
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title v-html="processMsg(mList.messageChain)"></v-list-item-title>
-          <v-list-item-subtitle>{{ new Date(Number(mList.messageChain[0].time+"000")).toLocaleString() }}</v-list-item-subtitle>
+          <v-list-item-subtitle>{{ new Date(Number(mList.messageChain[0].time+"000")).toLocaleString() }} | MsgID: {{ mList.messageChain[0].id }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </div>
@@ -196,6 +205,30 @@
       </v-card>
     </v-dialog>
 
+    <!-- 回复消息 -->
+    <v-dialog v-model="sQuote.dialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">回复</span>
+          <v-spacer></v-spacer>
+          <v-btn icon plain @click="sQuote.dialog = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-text-field label="Message ID" outlined v-model="sQuote.msgId"></v-text-field>
+          <v-text-field label="要说的话" v-model="sQuote.msg" outlined counter></v-text-field>
+          <v-btn
+            elevation="2"
+            block
+            x-large
+            :loading="sQuote.btnLoading"
+            @click="sendQuote(sQuote.msgId)"
+          >发送</v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <!-- 聊天框设置 -->
     <!-- 这里UI难看，但是能用 -->
     <v-dialog v-model="msgDialog" max-width="600px">
@@ -290,6 +323,13 @@ export default {
       btnLoading: false,
       xml: ""
     },
+    sQuote: {
+      dialog: null,
+      btnLoading: false,
+      targetId: null,
+      msgId: null,
+      msg: ""
+    },
     msgDialog: null,
     maxMsgLog: 64,
     autoScroll: true,
@@ -297,7 +337,13 @@ export default {
       status: false,
       text: null,
       timeout: 2000
-    }
+    },
+    rMenu: {
+      open: false,
+      x: 0,
+      y: 0
+    },
+    tSender: {}
   }),
 
   created() {
@@ -462,11 +508,23 @@ export default {
     },
 
     // 发送消息
-    async sendMsgg(chain) {
+    async sendMsgg(chain, quote = null) {
+      let mChain = [];
       const res = await axios.post(localStorage.addr + "/sendFriendMessage", {
         sessionKey: localStorage.sessionKey,
         target: this.$route.params.id,
+        quote: quote ? quote[0].msgId : null,
         messageChain: [chain]
+      });
+
+      quote ? (mChain = [quote[1], quote[2]]) : (mChain[0] = chain);
+
+      mChain.unshift({
+        id: res.data.messageId,
+        time: Date.now()
+          .toString()
+          .slice(0, 10),
+        type: "Source"
       });
 
       // 万一发不出去呢
@@ -483,16 +541,7 @@ export default {
         sender: {
           id: localStorage.qq
         },
-        messageChain: [
-          {
-            id: res.messageId,
-            time: Date.now()
-              .toString()
-              .slice(0, 10),
-            type: "Source"
-          },
-          chain
-        ]
+        messageChain: mChain
       };
       this.msgList.push(obj);
     },
@@ -577,6 +626,32 @@ export default {
       };
     },
 
+    // 回复消息
+    async sendQuote(msgId) {
+      if (this.sQuote.msg === "") return;
+      this.sQuote.btnLoading = true;
+      const chain = { type: "Plain", text: this.sQuote.msg };
+      const q = [
+        { msgId: msgId },
+        {
+          type: "Quote",
+          id: this.sQuote.msgId,
+          senderId: localStorage.qq,
+          targetId: this.sQuote.targetId,
+          group: 0,
+          origin: [{ type: "Plain", text: `Source: ${this.sQuote.msgId}` }]
+        },
+        { type: "Plain", text: this.sQuote.msg }
+      ];
+      this.sendMsgg(chain, q);
+      this.sQuote = {
+        dialog: null,
+        btnLoading: false,
+        msgId: null,
+        msg: ""
+      };
+    },
+
     // 设置最大聊天记录长度
     setMaxMsgLog() {
       localStorage.setItem("maxMsgLog", this.maxMsgLog);
@@ -590,6 +665,20 @@ export default {
       this.msgList = JSON.parse(
         localStorage.getItem("friend" + this.$route.params.id)
       );
+    },
+
+    /**
+     * 右键菜单部分
+     * 屎山+1好耶！
+     */
+    handleContextMenu(sender, msgId, $event) {
+      this.rMenu = {
+        open: true,
+        x: $event.clientX,
+        y: $event.clientY
+      };
+      this.tSender = sender;
+      this.tSender.msgId = msgId;
     }
   }
 };
