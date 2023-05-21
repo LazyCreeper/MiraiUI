@@ -473,9 +473,7 @@ export default {
     if (localStorage.maxMsgLog) this.maxMsgLog = Number(localStorage.maxMsgLog);
   },
 
-  mounted() {
-    this.loadLocalChatRecords();
-  },
+  mounted() {},
 
   destroyed() {
     // 关闭窗口时销毁相关信息
@@ -538,6 +536,9 @@ export default {
 
     wsOpen() {
       console.log("Websocket 连接成功");
+
+      // 连上了再加载本地记录
+      this.loadLocalChatRecords();
     },
 
     wsError() {
@@ -738,7 +739,7 @@ export default {
         // 群成员被禁言
         case "MemberMuteEvent": {
           if (evt.data.member.group.id != this.$route.params.id) return;
-          if(!evt.data.operator) return
+          if (!evt.data.operator) return;
           let obj = {
             type: "GroupMessage",
             sender: {
@@ -760,7 +761,11 @@ export default {
                 type: "Plain",
                 text: `${evt.data.member.memberName} 已被 ${
                   evt.data.operator.memberName
-                } 禁言 ${evt.data.durationSeconds < 60 ? 1 : evt.data.durationSeconds / 60} 分钟`
+                } 禁言 ${
+                  evt.data.durationSeconds < 60
+                    ? 1
+                    : evt.data.durationSeconds / 60
+                } 分钟`
               }
             ]
           };
@@ -771,7 +776,7 @@ export default {
         // 群成员解除禁言
         case "MemberUnmuteEvent": {
           if (evt.data.member.group.id != this.$route.params.id) return;
-          if(!evt.data.operator) return
+          if (!evt.data.operator) return;
           let obj = {
             type: "GroupMessage",
             sender: {
@@ -1122,7 +1127,7 @@ export default {
         }
       );
 
-      console.log(res.data.code)
+      console.log(res.data.code);
       // 万一发不出去呢
       if (res.data.code != 0) {
         this.snackbar = {
@@ -1159,8 +1164,12 @@ export default {
 
       if (this.setMute.name.type === "mute") {
         obj.messageChain[1].text = this.snackbar.text = `${
-          !this.tSender.memberName ? this.setMute.memberId : this.tSender.memberName
-        }已被你禁言 ${this.setMute.time < 60 ? 1 : this.setMute.time / 60} 分钟`;
+          !this.tSender.memberName
+            ? this.setMute.memberId
+            : this.tSender.memberName
+        }已被你禁言 ${
+          this.setMute.time < 60 ? 1 : this.setMute.time / 60
+        } 分钟`;
       } else {
         obj.messageChain[1].text = this.snackbar.text = "你开启了全员禁言";
       }
@@ -1222,7 +1231,9 @@ export default {
 
       if (this.setMute.name.type === "mute") {
         obj.messageChain[1].text = this.snackbar.text = `${
-          !this.tSender.memberName ? this.setMute.memberId : this.tSender.memberName
+          !this.tSender.memberName
+            ? this.setMute.memberId
+            : this.tSender.memberName
         }已被你解除禁言`;
       } else {
         obj.messageChain[1].text = this.snackbar.text = "你关闭了全员禁言";

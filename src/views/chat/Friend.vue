@@ -305,9 +305,7 @@ export default {
     if (localStorage.maxMsgLog) this.maxMsgLog = Number(localStorage.maxMsgLog);
   },
 
-  mounted() {
-    this.loadLocalChatRecords();
-  },
+  mounted() {},
 
   destroyed() {
     // 关闭窗口时销毁相关信息
@@ -351,7 +349,7 @@ export default {
     // 启动 WebSocket 连接，用于接收消息
     launchWs() {
       this.socket = true;
-      this.socket = ws('message')
+      this.socket = ws("message");
       // 监听 socket 连接
       this.socket.onopen = this.wsOpen;
 
@@ -364,6 +362,9 @@ export default {
 
     wsOpen() {
       console.log("Websocket 连接成功");
+
+      // 连上了再加载本地记录
+      this.loadLocalChatRecords();
     },
 
     wsError() {
@@ -589,7 +590,6 @@ export default {
       this.msgList = JSON.parse(
         localStorage.getItem("friend" + this.$route.params.id)
       );
-      
     }
   }
 };
