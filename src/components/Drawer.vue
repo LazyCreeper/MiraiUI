@@ -323,16 +323,22 @@ export default {
     }
   }),
 
-  watch: {},
+  watch: {
+    "$route.params.id": function() {
+      if (this.$route.path.split("/")[2] === "group") {
+        this.getGroupmemberList({ id: this.$route.params.id });
+      } else {
+        this.getFriendProfile({ id: this.$route.params.id });
+      }
+    }
+  },
 
   mounted() {
     this.getFriendList();
     this.getGroupList();
   },
 
-  updated() {
-    // console.log(this.)
-  },
+  updated() {},
 
   methods: {
     // 获取好友列表
