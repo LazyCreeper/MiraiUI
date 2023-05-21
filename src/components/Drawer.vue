@@ -336,6 +336,13 @@ export default {
   mounted() {
     this.getFriendList();
     this.getGroupList();
+    setTimeout(() => {
+      if (this.$route.path.split("/")[2] === "group") {
+        this.getGroupmemberList({ id: this.$route.params.id });
+      } else {
+        this.getFriendProfile({ id: this.$route.params.id });
+      }
+    }, 1000);
   },
 
   updated() {},
