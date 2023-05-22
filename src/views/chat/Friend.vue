@@ -711,7 +711,26 @@ export default {
     },
 
     // 从会话列表中移除
-    removeFromIndex() {},
+    removeFromIndex() {
+      if (this.$store.state.chat.id === null) {
+        this.snackbar.text = "保存失败，请从左侧菜单重新进入聊天窗口";
+        this.snackbar.color = "red accent-2";
+        this.snackbar.status = true;
+        return;
+      }
+      const arr = JSON.parse(localStorage.saveFList);
+
+      const newArr = arr.filter(
+        obj => JSON.stringify(obj) !== JSON.stringify(this.$store.state.chat)
+      );
+      localStorage.setItem("saveFList", JSON.stringify(newArr));
+
+      this.snackbar.text = "移除成功";
+      this.snackbar.color = "blue";
+      this.snackbar.status = true;
+
+      this.msgDialog = false;
+    },
 
     /**
      * 右键菜单部分

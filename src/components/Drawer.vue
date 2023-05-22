@@ -71,10 +71,9 @@
       >
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title>会话列表</v-list-item-title>
+            <v-list-item-title>已保存的会话</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-
         <!-- 保存的好友 -->
         <v-list-group prepend-icon="mdi-account-circle" v-if="saveFriendList.length > 0">
           <template v-slot:activator>
