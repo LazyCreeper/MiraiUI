@@ -6,22 +6,24 @@ export async function getSessionInfo() {
         const { data: info } = await axios.get(
             localStorage.addr + "/sessionInfo?sessionKey=" + localStorage.sessionKey
         );
-        console.log(info);
+
         //   如果认证失败
         if (info.code != 0) {
-            return {
-                code: 3,
+            store.commit("error", {
                 msg: info.msg
-            };
+            });
+            window.location.href = '/#/Error'
         } else {
             store.commit("sessionInfo", info.data);
-            return {
-                code: 0,
-                msg: '认证成功'
-            };
+            store.commit("isLogin", true);
+            return
         }
     } catch (err) {
-        console.log(err.message);
+        store.commit("error", {
+            msg: err.message
+        });
+        window.location.href = '/#/Error'
+        console.error(err.message);
         return false
         // throw new Error(err);
     }

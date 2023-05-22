@@ -47,26 +47,7 @@ export default {
       this.$router.push("login");
       return;
     } else {
-      getSessionInfo().then(res => {
-        if (!res) {
-          this.$store.commit("error", {
-            msg: "无法访问 mirai-http-api 地址，请检查你的网络连接"
-          });
-          this.$router.push("Error");
-        } else if (res.code != 0) {
-          // SessionKey 无效
-          this.$store.commit("error", {
-            msg: res.msg
-          });
-          this.$router.push("Error");
-        } else {
-          this.$store.commit("error", {
-            msg: null
-          });
-          console.log(res.msg);
-          this.$store.commit("isLogin", true);
-        }
-      });
+      getSessionInfo();
     }
   },
 
