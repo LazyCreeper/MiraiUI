@@ -703,7 +703,7 @@ export default {
         // 添加
         arr.push(this.$store.state.chat);
         localStorage.setItem("saveFList", JSON.stringify(arr));
-
+        this.$store.commit("changeList", new Date());
         this.snackbar.text = "保存成功";
         this.snackbar.color = "green";
         this.snackbar.status = true;
@@ -728,6 +728,7 @@ export default {
       this.snackbar.text = "移除成功";
       this.snackbar.color = "blue";
       this.snackbar.status = true;
+      this.$store.commit("changeList", new Date());
 
       this.msgDialog = false;
     },

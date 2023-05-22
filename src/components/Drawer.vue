@@ -358,6 +358,11 @@ export default {
       } else {
         this.getFriendProfile({ id: this.$route.params.id });
       }
+    },
+    // 监听列表改动，立刻更新
+    "$store.state.changeList": function() {
+      this.getSaveFriendList();
+      this.getSaveGroupList();
     }
   },
 
@@ -402,7 +407,6 @@ export default {
         localStorage.addr + "/friendList?sessionKey=" + localStorage.sessionKey
       );
       this.friendList = fList.data;
-      // this.$store.commit("friendList", fList.data);
     },
 
     // 获取群列表

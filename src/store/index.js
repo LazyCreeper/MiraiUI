@@ -16,13 +16,7 @@ export default new Vuex.Store({
         remark: '',
       }
     },
-    friendList: [
-      {
-        id: 1,
-        nickname: "Lazy",
-        remark: "Master",
-      }
-    ],
+    changeList: null,
     drawer: null,
     router: null,
     chat: {
@@ -50,8 +44,8 @@ export default new Vuex.Store({
     sessionInfo(state, data) {
       state.sessionInfo = data
     },
-    friendList(state, data) {
-      state.friendList = data
+    changeList(state, data) {
+      state.changeList = data
     },
     router(state, data) {
       state.router = data
