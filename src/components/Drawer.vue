@@ -64,37 +64,64 @@
       </v-sheet>
 
       <!-- 消息列表 -->
-      <v-list class="pl-14" shaped v-if="this.$store.state.router === 'main'">
+      <v-list
+        class="pl-14"
+        shaped
+        v-if="this.$store.state.router === 'main' || $route.path.split('/')[1] === 'ichat'"
+      >
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title>会话列表</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title>这个功能没做</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title>因为我群少</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title>其次我不会</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title>！你说你会？</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title>去Github提交Pr~</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+
+        <!-- 保存的好友 -->
+        <v-list-group prepend-icon="mdi-account-circle" v-if="saveFriendList.length > 0">
+          <template v-slot:activator>
+            <v-list-item-title>好友 ({{ saveFriendList.length }})</v-list-item-title>
+          </template>
+          <v-list-item-group>
+            <v-list-item
+              v-for="(fList, i) in saveFriendList"
+              :key="i"
+              link
+              :to="'/ichat/friend/'+fList.id"
+              @click="toChat(fList)"
+            >
+              <v-list-item-avatar>
+                <v-img :src="'https://q1.qlogo.cn/g?b=qq&nk='+fList.id+'&s=160'" />
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>{{ fList.nickname }} ({{ fList.remark }})</v-list-item-title>
+                <v-list-item-subtitle>{{ fList.id }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list-group>
+
+        <!-- 保存的群聊 -->
+        <v-list-group prepend-icon="mdi-account-group-outline" v-if="saveGroupList.length > 0">
+          <template v-slot:activator>
+            <v-list-item-title>群聊 ({{ saveGroupList.length }})</v-list-item-title>
+          </template>
+          <v-list-item-group>
+            <v-list-item
+              v-for="(gList, i) in saveGroupList"
+              :key="i"
+              link
+              :to="'/ichat/group/'+gList.id"
+              @click="toChat(gList)"
+            >
+              <v-list-item-avatar>
+                <v-img :src="'https://p.qlogo.cn/gh/'+gList.id+'/'+gList.id+'/100'" />
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>{{ gList.name }}</v-list-item-title>
+                <v-list-item-subtitle>{{ (gList.permission === "MEMBER") ? "" : "🤴" }} {{ gList.id }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list-group>
       </v-list>
 
       <!-- 联系人 -->
@@ -264,6 +291,8 @@ export default {
   name: "Drawer",
   data: () => ({
     drawer: null,
+    saveFriendList: [],
+    saveGroupList: [],
     friendList: [
       {
         id: 1,
@@ -334,6 +363,8 @@ export default {
   },
 
   mounted() {
+    this.getSaveFriendList();
+    this.getSaveGroupList();
     this.getFriendList();
     this.getGroupList();
     setTimeout(() => {
@@ -348,6 +379,24 @@ export default {
   updated() {},
 
   methods: {
+    // 获取保存的好友列表
+    async getSaveFriendList() {
+      // 如果没有的话就创建一个
+      if (!localStorage.getItem("saveFList")) {
+        localStorage.setItem("saveFList", "[]");
+      }
+      this.saveFriendList = JSON.parse(localStorage.saveFList);
+    },
+
+    // 获取保存的群列表
+    async getSaveGroupList() {
+      // 如果没有的话就创建一个
+      if (!localStorage.getItem("saveGList")) {
+        localStorage.setItem("saveGList", "[]");
+      }
+      this.saveGroupList = JSON.parse(localStorage.saveGList);
+    },
+
     // 获取好友列表
     async getFriendList() {
       const { data: fList } = await axios.get(
@@ -369,8 +418,10 @@ export default {
     toChat(d) {
       const obj = {
         id: d.id,
-        name: d.nickname || d.name,
-        remark: d.remark
+        name: d.name,
+        remark: d.remark,
+        nickname: d.nickname,
+        permission: d.permission
       };
       this.$store.commit("chat", obj);
       this.getFriendProfile(obj);

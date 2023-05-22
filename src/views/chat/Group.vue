@@ -396,7 +396,21 @@
               <v-btn elevation="2" @click="setMaxMsgLog">保存</v-btn>
             </template>
           </v-slider>
-          <v-switch v-model="autoScroll" label="有新消息时是否滚动到最底部"></v-switch>
+          <v-row>
+            <v-col cols="10" class="mt-1">
+              <v-subheader>有新消息时是否滚动到最底部</v-subheader>
+            </v-col>
+            <v-col cols="2">
+              <v-switch dense v-model="autoScroll"></v-switch>
+            </v-col>
+          </v-row>
+          <v-btn
+            elevation="2"
+            color="green"
+            @click="saveToIndex"
+            v-if="$route.path.split('/')[1] === 'chat'"
+          >保存到会话列表</v-btn>
+          <v-btn elevation="2" color="red" @click="removeFromIndex" v-else>从会话列表中移除</v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -1143,6 +1157,40 @@ export default {
         localStorage.getItem("group" + this.$route.params.id)
       );
     },
+
+    // 保存到会话列表
+    saveToIndex() {
+      if (this.$store.state.chat.id === null) {
+        this.snackbar.text = "保存失败，请从左侧菜单重新进入聊天窗口";
+        this.snackbar.color = "red accent-2";
+        this.snackbar.status = true;
+        return;
+      }
+
+      // 字符串转数组
+      const arr = JSON.parse(localStorage.saveGList);
+
+      if (
+        arr.some(
+          obj => JSON.stringify(obj) === JSON.stringify(this.$store.state.chat)
+        )
+      ) {
+        this.snackbar.text = "该会话已存在";
+        this.snackbar.color = "red accent-2";
+        this.snackbar.status = true;
+      } else {
+        // 添加
+        arr.push(this.$store.state.chat);
+        localStorage.setItem("saveGList", JSON.stringify(arr));
+
+        this.snackbar.text = "保存成功";
+        this.snackbar.color = "green";
+        this.snackbar.status = true;
+      }
+    },
+
+    // 从会话列表中移除
+    removeFromIndex() {},
 
     /**
      * 右键菜单部分

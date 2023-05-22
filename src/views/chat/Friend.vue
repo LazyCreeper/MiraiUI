@@ -255,17 +255,30 @@
               <v-btn elevation="2" @click="setMaxMsgLog">保存</v-btn>
             </template>
           </v-slider>
-          <v-switch v-model="autoScroll" label="有新消息时是否滚动到最底部"></v-switch>
+          <v-row>
+            <v-col cols="10" class="mt-1">
+              <v-subheader>有新消息时是否滚动到最底部</v-subheader>
+            </v-col>
+            <v-col cols="2">
+              <v-switch dense v-model="autoScroll"></v-switch>
+            </v-col>
+          </v-row>
+          <v-btn
+            elevation="2"
+            color="green"
+            @click="saveToIndex"
+            v-if="$route.path.split('/')[1] === 'chat'"
+          >保存到会话列表</v-btn>
+          <v-btn elevation="2" color="red" @click="removeFromIndex" v-else>从会话列表中移除</v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-snackbar
-      v-model="snackbar.status"
-      :timeout="snackbar.timeout"
-      top
-      right
-      text
-    >{{ snackbar.text }}</v-snackbar>
+    <v-snackbar v-model="snackbar.status" :timeout="snackbar.timeout" top :color="snackbar.color">
+      {{ snackbar.text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn text v-bind="attrs" @click="snackbar.status = false">关闭</v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -381,8 +394,7 @@ export default {
 
       // 窗口内有超过一组消息时，删除第一条消息
       if (val > this.maxMsgLog) this.msgList.shift();
-    },
-    msgList: function() {
+
       // 将保存数据到浏览器
       localStorage.setItem(
         "friend" + this.$route.params.id,
@@ -666,6 +678,40 @@ export default {
         localStorage.getItem("friend" + this.$route.params.id)
       );
     },
+
+    // 保存到会话列表
+    saveToIndex() {
+      if (this.$store.state.chat.id === null) {
+        this.snackbar.text = "保存失败，请从左侧菜单重新进入聊天窗口";
+        this.snackbar.color = "red accent-2";
+        this.snackbar.status = true;
+        return;
+      }
+
+      // 字符串转数组
+      const arr = JSON.parse(localStorage.saveFList);
+
+      if (
+        arr.some(
+          obj => JSON.stringify(obj) === JSON.stringify(this.$store.state.chat)
+        )
+      ) {
+        this.snackbar.text = "该会话已存在";
+        this.snackbar.color = "red accent-2";
+        this.snackbar.status = true;
+      } else {
+        // 添加
+        arr.push(this.$store.state.chat);
+        localStorage.setItem("saveFList", JSON.stringify(arr));
+
+        this.snackbar.text = "保存成功";
+        this.snackbar.color = "green";
+        this.snackbar.status = true;
+      }
+    },
+
+    // 从会话列表中移除
+    removeFromIndex() {},
 
     /**
      * 右键菜单部分

@@ -30,8 +30,18 @@ const routes = [
     component: () => import("../views/chat/Friend.vue"),
   },
   {
+    path: "/ichat/friend/:id",
+    name: "ichatWithFriend",
+    component: () => import("../views/chat/Friend.vue"),
+  },
+  {
     path: "/chat/group/:id",
     name: "chatWithGroup",
+    component: () => import("../views/chat/Group.vue"),
+  },
+  {
+    path: "/ichat/group/:id",
+    name: "ichatWithGroup",
     component: () => import("../views/chat/Group.vue"),
   },
   {
