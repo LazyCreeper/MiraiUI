@@ -537,8 +537,7 @@ export default {
 
       // 窗口内有超过一组消息时，删除第一条消息
       if (val > this.maxMsgLog) this.msgList.shift();
-    },
-    msgList: function() {
+
       // 将保存数据到浏览器
       localStorage.setItem(
         "group" + this.$route.params.id,
@@ -862,11 +861,12 @@ export default {
           }
           case "At":
             合并の.push("@" + msg[i].target + " ");
-            if (msg[i].target === +localStorage.qq) {
-              this.snackbar.text = `有人@你`;
-              this.snackbar.color = "red accent-2";
-              this.snackbar.status = true;
-            }
+            // BUG
+            // if (msg[i].target === +localStorage.qq) {
+            //   this.snackbar.text = `有人@你`;
+            //   this.snackbar.color = "red accent-2";
+            //   this.snackbar.status = true;
+            // }
             break;
           case "AtAll":
             合并の.push("@全体成员 ");
