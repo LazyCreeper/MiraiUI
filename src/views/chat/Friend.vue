@@ -2,6 +2,7 @@
   <div>
     <v-menu v-model="rMenu.open" :position-x="rMenu.x" :position-y="rMenu.y">
       <v-list>
+        <v-list-item @click="rm_recall(tSender)">撤回</v-list-item>
         <v-list-item
           @click="sQuote.dialog = true;sQuote.msgId = tSender.msgId,sQuote.targetId = tSender.id"
         >回复</v-list-item>
@@ -745,6 +746,50 @@ export default {
       };
       this.tSender = sender;
       this.tSender.msgId = msgId;
+    },
+
+    // 撤回消息（已经撤回了，但是自己还是看得见，别人看不见）
+    async rm_recall(sender) {
+      const res = await axios.post(localStorage.addr + "/recall", {
+        sessionKey: localStorage.sessionKey,
+        target: Number(this.$route.params.id),
+        messageId: sender.msgId
+      });
+
+      // 万一发不出去呢
+      if (res.data.code != 0) {
+        this.snackbar = {
+          text: res.data.msg,
+          color: "red accent-2",
+          status: true
+        };
+        return;
+      }
+
+      let obj = {
+        type: "FriendMessage",
+        sender: {
+          group: {
+            id: Number(this.$route.params.id)
+          },
+          id: 10000,
+          memberName: "系统消息"
+        },
+        messageChain: [
+          {
+            id: 0,
+            time: Date.now()
+              .toString()
+              .slice(0, 10),
+            type: "Source"
+          },
+          {
+            type: "Plain",
+            text: `你撤回了MsgID为 ${sender.msgId} 的消息`
+          }
+        ]
+      };
+      this.msgList.push(obj);
     }
   }
 };
