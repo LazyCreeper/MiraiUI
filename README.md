@@ -1,6 +1,6 @@
 # Mirai UI
 
-一个基于[Mirai-http-api](https://docs.mirai.mamoe.net/mirai-api-http/)的 WebQQ
+一个基于 [Mirai-http-api](https://docs.mirai.mamoe.net/mirai-api-http/) 的 WebQQ
 
 ## 这有啥用
 
@@ -8,7 +8,11 @@
 
 ## 运行环境
 
-任意 http 服务器，无需 php，mysql 环境
+任意支持静态 html 托管的服务器，无需 php，mysql 等复杂环境
+
+## 截图
+![main](./screenshorts/main.png)
+![chat](./screenshorts/chat.png)
 
 ## 如何使用
 
