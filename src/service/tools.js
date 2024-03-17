@@ -6,13 +6,9 @@ export async function getSessionInfo() {
         const { data: info } = await axios.get(
             localStorage.addr + "/sessionInfo?sessionKey=" + localStorage.sessionKey
         );
-
         //   如果认证失败
         if (info.code != 0) {
-            store.commit("error", {
-                msg: info.msg
-            });
-            window.location.href = '/#/Error'
+            throw new Error(info.msg)
         } else {
             store.commit("sessionInfo", info.data);
             store.commit("isLogin", true);
@@ -22,10 +18,9 @@ export async function getSessionInfo() {
         store.commit("error", {
             msg: err.message
         });
-        window.location.href = '/#/Error'
-        console.error(err.message);
+        window.location.href = "/#/Error"
+        console.error(err);
         return false
-        // throw new Error(err);
     }
 }
 

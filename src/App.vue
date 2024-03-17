@@ -42,21 +42,19 @@ export default {
     isLogin: false
   }),
 
-  created() {
-    if (!localStorage.getItem("sessionKey")) {
-      this.$router.push("login");
-      return;
-    } else {
-      getSessionInfo();
-    }
-  },
-
-  mounted() {
+  async mounted() {
     setInterval(() => {
       this.time = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(11, 8);
     }, 1000);
+
+    if (!localStorage.getItem("sessionKey")) {
+      this.$router.push("login");
+      return;
+    } else {
+      await getSessionInfo();
+    }
   },
 
   methods: {
